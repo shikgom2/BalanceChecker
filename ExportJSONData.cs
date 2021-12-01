@@ -104,7 +104,7 @@ public class ExportJSONData : MonoBehaviour
         {
             StaticCSVHandler.leftArchIndexList.Sort();
             StaticCSVHandler.rightArchIndexList.Sort();
-
+               12
             Array.Sort(StaticHandler.LeftPercentHistory);
             Array.Sort(StaticHandler.RightPercentHistory);
             Array.Sort(StaticHandler.TopPercentHistory);
@@ -175,6 +175,7 @@ public class ExportJSONData : MonoBehaviour
                 COGY += StaticHandler.COGYHistory[i];
                 count++;
             }
+            Debug.Log(StaticHandler.StaticframeCount);
 
             leftArchIndex /= count;
             rightArchIndex /= count;
