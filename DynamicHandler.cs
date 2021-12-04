@@ -241,7 +241,9 @@ public class DynamicHandler : MonoBehaviour
             }
             yield return null;
         }
-        startButton.gameObject.SetActive(false);   }
+        startButton.gameObject.SetActive(false);   
+    }
+
     void resetFrame()
     {
         DynamicframeCount = 0;
@@ -280,10 +282,11 @@ public class DynamicHandler : MonoBehaviour
 
         STATUS = (int)MODE.WAITING_START;
         DynamicFrameRecordArray = new byte[100, 2288];
-        
+        SetPowA(40);    //set sensivity
+
         //Display.displays[0].Activate(1920, 1080, 60);
-        //  Display.displays[1].Activate(1920, 1080, 60);
-        
+        //Display.displays[1].Activate(1920, 1080, 60);
+
         Close();
     }
 
@@ -377,6 +380,11 @@ public class DynamicHandler : MonoBehaviour
             int frame_temp = 0;
             for (int i = 0; i < targetImage.Length; i++)
             {
+                
+                if(tmpImageBuffer[i] < 20)
+                {
+                    tmpImageBuffer[i] = 0;
+                }
                 targetImage[i].r = (byte)(255 - tmpImageBuffer[i]);
                 targetImage[i].g = (byte)(255 - tmpImageBuffer[i]);
                 targetImage[i].b = (byte)(255 - tmpImageBuffer[i]);
@@ -389,11 +397,11 @@ public class DynamicHandler : MonoBehaviour
 
                     if (STATUS == (int)MODE.START_LEFT)
                     {
-                        leftImageDetectedSum[i] += targetImage[i].r;
+                        leftImageDetectedSum[i] += tmpImageBuffer[i];
                     }
                     else if (STATUS == (int)MODE.START_RIGHT)
                     {
-                        rightImageDetectedSum[i] += targetImage[i].r;
+                        rightImageDetectedSum[i] += tmpImageBuffer[i];
 
                     }
                 }
@@ -405,6 +413,38 @@ public class DynamicHandler : MonoBehaviour
             //remove noise
             for (int i = 0; i<targetImage.Length;i++)
             {
+                /*
+                int noiseCount = 0;
+                int[] pixelDirction = new int[8];
+                pixelDirction[0] = (i - StaticHandler.WIDTH - 1) > 0 ? (i - StaticHandler.WIDTH - 1) : 0;
+                pixelDirction[1] = (i - StaticHandler.WIDTH + 1) > 0 ? (i - StaticHandler.WIDTH + 1) : 0;
+                pixelDirction[2] = (i + StaticHandler.WIDTH - 1) < StaticHandler.WIDTH * StaticHandler.HEIGHT ? (i + StaticHandler.WIDTH - 1) : StaticHandler.WIDTH * StaticHandler.HEIGHT - 1;
+                pixelDirction[3] = (i + StaticHandler.WIDTH + 1) < StaticHandler.WIDTH * StaticHandler.HEIGHT ? (i + StaticHandler.WIDTH + 1) : StaticHandler.WIDTH * StaticHandler.HEIGHT - 1;
+                pixelDirction[4] = (i - 1) > 0 ? (i - 1) : 0;
+                pixelDirction[5] = (i + 1) < StaticHandler.WIDTH * StaticHandler.HEIGHT ? (i + 1) : StaticHandler.WIDTH * StaticHandler.HEIGHT - 1;
+                pixelDirction[6] = (i - StaticHandler.WIDTH) > 0 ? (i - StaticHandler.WIDTH) : 0;
+                pixelDirction[7] = (i + StaticHandler.WIDTH) < StaticHandler.WIDTH * StaticHandler.HEIGHT ? (i + StaticHandler.WIDTH) : StaticHandler.WIDTH * StaticHandler.HEIGHT - 1;
+
+                for(int j = 0; j < 8; j++)
+                {
+                    if(pixelDirction[j] == 255)
+                    {
+                        noiseCount++;
+                    }
+                }
+
+                if(noiseCount >= 6)
+                {
+                    detectedImage[i].r = 255;
+                    detectedImage[i].g = 255;
+                    detectedImage[i].b = 255;
+
+                    targetImage[i].r = 255;
+                    targetImage[i].g = 255;
+                    targetImage[i].b = 255;
+                }
+                
+                
                 int topleft = (i - StaticHandler.WIDTH - 1) > 0 ? (i - StaticHandler.WIDTH - 1) : 0;
                 int topright = (i - StaticHandler.WIDTH + 1) > 0 ? (i - StaticHandler.WIDTH + 1) : 0;
                 int bottomleft = (i + StaticHandler.WIDTH - 1) < StaticHandler.WIDTH * StaticHandler.HEIGHT ? (i + StaticHandler.WIDTH - 1) : StaticHandler.WIDTH * StaticHandler.HEIGHT-1;
@@ -426,6 +466,7 @@ public class DynamicHandler : MonoBehaviour
                     targetImage[i].g = 255;
                     targetImage[i].b = 255;
                 }
+                */
             }
 
             if (STATUS == (int)MODE.START_LEFT)
@@ -477,6 +518,7 @@ public class DynamicHandler : MonoBehaviour
             imageInterpolation.sprite.texture.SetPixels32(interpolationImage);
             imageInterpolation.sprite.texture.Apply();
             makeWeightImage();
+            SetPowA(40);    //set sensivity
 
         }
         else//Sensor Not detected
@@ -640,7 +682,7 @@ public class DynamicHandler : MonoBehaviour
             resultImage2[i].g = resultImage[i].g / 255f;
             resultImage2[i].b = resultImage[i].b / 255f;
 
-            if (resultImage[i].r == 0 && resultImage[i].g == 0 && resultImage[i].b == 128)
+            if (resultImage[i].r == 0 && resultImage[i].g == 0 && resultImage[i].b > 110)
             {
 
                 resultImage[i].r = 34;
