@@ -183,7 +183,7 @@ public class StaticHandler : MonoBehaviour
             startTime = Time.time;
         }
         byte[] rawDataBuffer = new byte[WIDTH * HEIGHT];
-        SetPowA(60);
+        SetPowA(40);
         CollectFrame(rawDataBuffer);    //SAVE BUFFER
 
         var leftAvg = new Tuple<double, double, double,int>(0,0, 0, 0);
