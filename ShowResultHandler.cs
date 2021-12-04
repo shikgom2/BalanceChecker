@@ -137,15 +137,18 @@ public class ShowResultHandler : MonoBehaviour
         //left
         for (int i = 0; i < tmpResult.Length; i++)
         {
-            DynamicHandler.leftImageDetectedSum[i] = (DynamicHandler.leftImageDetectedSum[i] / DynamicHandler.leftIdx);
+            DynamicHandler.leftImageDetectedSum[i] = (DynamicHandler.leftImageDetectedSum[i] / DynamicHandler.leftIdx); //average
+
             if(DynamicHandler.leftImageDetectedSum[i] >= 255)
             {
                 DynamicHandler.leftImageDetectedSum[i] = 255;
             }
+            
             if(DynamicHandler.leftImageDetectedSum[i] <= 20)
             {
                 DynamicHandler.leftImageDetectedSum[i] = 0;
             }
+            
             tmpResult[i] = new Color32
             {
                 r = (byte)(DynamicHandler.leftImageDetectedSum[i] > 0 ? 0 : 255),
