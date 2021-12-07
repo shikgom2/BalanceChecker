@@ -103,7 +103,6 @@ public class StartBalancecheckerHandler : MonoBehaviour
                     ins.name = "patient" + (i + 1) + "Button";
                     ins.transform.SetParent(canvas.transform);
                     //ins.GetComponent<Button>.onClick.AddListener();
-                   
                 }
                 string[] birth = patientInfoMap[i]["birth"].Split('-');
                 int year = Int32.Parse(birth[0]);
