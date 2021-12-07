@@ -598,7 +598,7 @@ public class StaticHandler : MonoBehaviour
             leftCOPYHistory[StaticframeCount] = leftCOPY;
 
             leftAreaCountHistory[StaticframeCount] = visitQueue.Count();
-            Debug.Log("LEFT PIXEL COUNT : " + visitQueue.Count() + " VALUE SUM : " + avg);
+            //Debug.Log("LEFT PIXEL COUNT : " + visitQueue.Count() + " VALUE SUM : " + avg);
 
         }
         else if(FOOT_TYPE == "RIGHT")
@@ -609,9 +609,7 @@ public class StaticHandler : MonoBehaviour
             rightCOPYHistory[StaticframeCount] = rightCOPY;
 
             rightAreaCountHistory[StaticframeCount] = visitQueue.Count();
-            Debug.Log("RIGHT PIXEL COUNT : " + visitQueue.Count() + " VALUE SUM : " + avg);
-
-
+            //Debug.Log("RIGHT PIXEL COUNT : " + visitQueue.Count() + " VALUE SUM : " + avg);
         }
         imageDetected.sprite.texture.SetPixels32(detectedImage);
         imageDetected.sprite.texture.Apply();
