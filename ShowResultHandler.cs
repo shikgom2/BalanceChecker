@@ -155,26 +155,71 @@ public class ShowResultHandler : MonoBehaviour
                 g = (byte)(DynamicHandler.leftImageDetectedSum[i] > 0 ? 0 : 255),
                 b = (byte)(DynamicHandler.leftImageDetectedSum[i] > 0 ? 0 : 255)
             };
-
-            if (DynamicHandler.leftImageDetectedSum[i] > 0)
+        }
+        int leftStartIdx = 999;
+        int leftEndIdx = -1;
+        int rightStartIdx = 999;
+        int rightEndIdx = -1;
+        //GET MAX MIN Y
+        for (int i = 0; i < DynamicHandler.leftIdx; i++)
+        {
+            for (int j = 0; j < StaticHandler.WIDTH * StaticHandler.HEIGHT; j++)
             {
-                int tmp = i % StaticHandler.WIDTH;
+                if (DynamicHandler.DynamicFrameRecordArray[i, j] != 255)
+                {
+                    int tmp = DynamicHandler.DynamicFrameRecordArray[i, j];
+                    int tmp2 = j % StaticHandler.WIDTH;
 
-                if (leftStartY > tmp)
-                {
-                    leftStartY = tmp;
+                    if (leftStartIdx == 999)
+                    {
+                        leftStartIdx = tmp2;
+                        leftEndIdx = tmp2;
+                    }
+                    if (leftStartIdx > tmp2)
+                    {
+                        leftStartIdx = tmp2;
+                    }
+                    else if (leftEndIdx < tmp2)
+                    {
+                        leftEndIdx = tmp2;
+                    }
                 }
-                if (leftStartY != 999 && leftEndY < tmp)
+            }
+        }
+
+        for (int i = DynamicHandler.leftIdx; i < DynamicHandler.rightIdx; i++)
+        {
+            for (int j = 0; j < StaticHandler.WIDTH * StaticHandler.HEIGHT; j++)
+            {
+                if (DynamicHandler.DynamicFrameRecordArray[i, j] != 255)
                 {
-                    leftEndY = tmp;
+                    int tmp = DynamicHandler.DynamicFrameRecordArray[i, j];
+                    int tmp2 = j % StaticHandler.WIDTH;
+
+                    if (rightStartIdx == 999)
+                    {
+                        rightStartIdx = tmp2;
+                        rightEndIdx = tmp2;
+                    }
+                    if (rightStartIdx > tmp2)
+                    {
+                        rightStartIdx = tmp2;
+                    }
+                    else if (rightEndIdx < tmp2)
+                    {
+                        rightEndIdx = tmp2;
+                    }
                 }
             }
         }
         leftFrameSection1 = (leftEndY - leftStartY) / 3 + leftStartY;
         leftFrameSection2 = (leftEndY - leftStartY) / 3 * 2 + leftStartY;
-
+        rightFrameSection1 = (rightEndY - rightStartY) / 3 + rightStartY;
+        rightFrameSection2 = (rightEndY - rightStartY) / 3 * 2 + rightStartY;
 
         Debug.Log("leftstartY :" + leftStartY + " leftEndY : " + leftEndY + " leftFrameSction1 : " + leftFrameSection1 + " leftFrameSection2 : " + leftFrameSection2);
+        Debug.Log("rightStartY :" + rightStartY + " rightEndY : " + rightEndY + " rightFrameSection1 : " + rightFrameSection1 + " rightFrameSection2 : " + rightFrameSection2);
+
         tmp.sprite.texture.SetPixels32(tmpResult);
         tmp.sprite.texture.Apply();
         interpolationResult(ref tmpResult, ref leftResult, StaticHandler.WIDTH, StaticHandler.HEIGHT, StaticHandler.SCALE);
@@ -244,7 +289,6 @@ public class ShowResultHandler : MonoBehaviour
 
         Debug.Log("#1 width avg : " + widthavg + " height avg : " + heightavg);
 
-
         //crop point
         for(int i = 0; i < DynamicHandler.leftIdx; i++)
         {
@@ -257,7 +301,7 @@ public class ShowResultHandler : MonoBehaviour
         int cropIdx = 0;
         for(int i = 0; i < leftResult.Length; i++)
         {
-            if(i % 520 >= heightmin && i% 520 < heightmax && i / 520 >= widthmin && i / 520 < widthmax)
+            if(i % 520 >= heightmin && i % 520 < heightmax && i / 520 >= widthmin && i / 520 < widthmax)
             {
                 leftCrop[cropIdx].r = leftResult[i].r;
                 leftCrop[cropIdx].g = leftResult[i].g;
@@ -281,7 +325,17 @@ public class ShowResultHandler : MonoBehaviour
 
         for (int i = 0; i < tmpResult2.Length; i++)
         {
-            //DynamicHandler.rightImageDetectedSum[i] = (DynamicHandler.rightImageDetectedSum[i] / total_right);
+            DynamicHandler.rightImageDetectedSum[i] = (DynamicHandler.rightImageDetectedSum[i] / total_right);
+
+            if (DynamicHandler.rightImageDetectedSum[i] >= 255)
+            {
+                DynamicHandler.rightImageDetectedSum[i] = 255;
+            }
+
+            if (DynamicHandler.rightImageDetectedSum[i] <= 20)
+            {
+                DynamicHandler.rightImageDetectedSum[i] = 0;
+            }
 
             tmpResult2[i] = new Color32 
             {
@@ -289,22 +343,7 @@ public class ShowResultHandler : MonoBehaviour
                 g = (byte)(DynamicHandler.rightImageDetectedSum[i] > 0 ? 0 : 255),
                 b = (byte)(DynamicHandler.rightImageDetectedSum[i] > 0 ? 0 : 255)
             };
-            if(DynamicHandler.rightImageDetectedSum[i] > 0)
-            {
-                int tmp = i % StaticHandler.WIDTH;
-
-                if (rightStartY > tmp)
-                {
-                    rightStartY = tmp;
-                }
-                if (rightStartY != 999 && rightEndY < tmp)
-                {
-                    rightEndY = tmp;
-                }
-            }
         }
-        rightFrameSection1 = (rightEndY - rightStartY) / 3 + rightStartY;
-        rightFrameSection2 = (rightEndY - rightStartY) / 3 * 2 + rightStartY;
 
         tmp2.sprite.texture.SetPixels32(tmpResult2);
         tmp2.sprite.texture.Apply();
