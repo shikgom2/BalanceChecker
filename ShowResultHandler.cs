@@ -142,7 +142,7 @@ public class ShowResultHandler : MonoBehaviour
             {
                 DynamicHandler.leftImageDetectedSum[i] = 255;
             }
-            if(DynamicHandler.leftImageDetectedSum[i] <= 10)
+            if(DynamicHandler.leftImageDetectedSum[i] <= 5)
             {
                 DynamicHandler.leftImageDetectedSum[i] = 0;
             }
@@ -284,7 +284,7 @@ public class ShowResultHandler : MonoBehaviour
             {
                 DynamicHandler.rightImageDetectedSum[i] = 255;
             }
-            if (DynamicHandler.rightImageDetectedSum[i] <= 10)
+            if (DynamicHandler.rightImageDetectedSum[i] <= 5)
             {
                 DynamicHandler.rightImageDetectedSum[i] = 0;
             }
@@ -425,7 +425,6 @@ public class ShowResultHandler : MonoBehaviour
         {
             leftStartIdx = 999;
             leftEndIdx = -1;
-            float leftFramePercent = 0f;
             for (int j = 0; j < StaticHandler.WIDTH * StaticHandler.HEIGHT; j++)
             {
                 if (DynamicHandler.DynamicFrameRecordArray[i, j] != 255)
@@ -458,9 +457,7 @@ public class ShowResultHandler : MonoBehaviour
                 leftEndIdx = leftEndY;
             }
 
-            leftFramePercent = (float)(leftEndIdx - leftStartIdx) / (float)(leftEndY - leftStartY) * 100;
-
-            Debug.Log("Frame" + i + " startidx = " + leftStartIdx + " endidx = " + leftEndIdx + " percent : " + leftFramePercent + "%");
+            Debug.Log("Frame" + i + " startidx = " + leftStartIdx + " endidx = " + leftEndIdx);
             //leftStartY : µÞ²ÞÄ¡ leftEndIdx : Á¾Àû°ñµÎ
 
             if (leftStartIdx <= leftSection1 && leftEndIdx <= leftSection2 || i == 0)
@@ -472,12 +469,6 @@ public class ShowResultHandler : MonoBehaviour
             }
             else if (leftStartIdx <= leftSection1 && leftEndIdx >= leftSection2 && lastestShape != 2 && i < DynamicHandler.rightIdx - 1)
             {
-                /*
-                if (lastestEndIdx > leftSection1)
-                {
-                    lastestEndIdx = leftSection1;
-                }
-                */
                 Debug.Log("Frame" + i + " is mid statce");
                 if (lastestShape == 0)
                 {
@@ -552,7 +543,6 @@ public class ShowResultHandler : MonoBehaviour
         {
             rightStartIdx = 999;
             rightEndIdx = -1;
-            float rightFramePercent = 0f;
 
             for (int j = 0; j < StaticHandler.WIDTH * StaticHandler.HEIGHT; j++)
             {
@@ -593,11 +583,8 @@ public class ShowResultHandler : MonoBehaviour
                 rightEndIdx = rightEndY;
             }
 
-            rightFramePercent = (float)(rightEndIdx - rightStartIdx) / (float)(rightEndY - rightStartY) * 100;
 
-            Debug.Log("Frame" + i + " startidx = " + rightStartIdx + " endidx = " + rightEndIdx + " percent = " + rightFramePercent + "%");
-
-            int status = 0;
+            Debug.Log("Frame" + i + " startidx = " + rightStartIdx + " endidx = " + rightEndIdx);
 
             if (rightStartIdx <= rightSection1 && rightEndIdx <= rightSection2 || i == DynamicHandler.leftIdx)
             {
