@@ -142,7 +142,7 @@ public class ShowResultHandler : MonoBehaviour
             {
                 DynamicHandler.leftImageDetectedSum[i] = 255;
             }
-            if(DynamicHandler.leftImageDetectedSum[i] <= 20)
+            if(DynamicHandler.leftImageDetectedSum[i] <= 10)
             {
                 DynamicHandler.leftImageDetectedSum[i] = 0;
             }
@@ -284,7 +284,7 @@ public class ShowResultHandler : MonoBehaviour
             {
                 DynamicHandler.rightImageDetectedSum[i] = 255;
             }
-            if (DynamicHandler.rightImageDetectedSum[i] <= 20)
+            if (DynamicHandler.rightImageDetectedSum[i] <= 10)
             {
                 DynamicHandler.rightImageDetectedSum[i] = 0;
             }
