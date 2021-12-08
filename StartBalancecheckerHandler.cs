@@ -87,7 +87,6 @@ public class StartBalancecheckerHandler : MonoBehaviour
         WWWForm form = new WWWForm();
         WWW www = new WWW(RegisteredListURL, form);
         yield return www;
-        Debug.Log("call this function");
 
         if (www.error == null)
         {
