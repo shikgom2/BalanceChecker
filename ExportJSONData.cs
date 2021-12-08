@@ -100,7 +100,7 @@ public class ExportJSONData : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        if(StaticVaribleHandler.isEndDynamic && !exportDataFlag)
+        if(StaticVaribleHandler.isEndStatic && StaticVaribleHandler.isEndDynamic && !exportDataFlag)
         {
             StaticCSVHandler.leftArchIndexList.Sort();
             StaticCSVHandler.rightArchIndexList.Sort();
