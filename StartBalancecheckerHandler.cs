@@ -34,6 +34,7 @@ public class StartBalancecheckerHandler : MonoBehaviour
     public Sprite normalImage;
     public GameObject lastSelectedGameObject;
 
+    public bool callFlag = false;
     public List<string> patientList;
 
     void goStaticScene()
@@ -69,9 +70,14 @@ public class StartBalancecheckerHandler : MonoBehaviour
 
     private void Update()
     {
-        if((int)Time.time % 5 == 0)
+        if ((int)Time.time % 5 == 0 && callFlag)
         {
             StartCoroutine(getPatientStatus());
+            callFlag = false;
+        }
+        else if ((int) Time.time % 5 > 0)
+        {
+            callFlag = true;
         }
     }
     public GameObject patientButton1;
@@ -80,8 +86,8 @@ public class StartBalancecheckerHandler : MonoBehaviour
     {
         WWWForm form = new WWWForm();
         WWW www = new WWW(RegisteredListURL, form);
-
         yield return www;
+        Debug.Log("call this function");
 
         if (www.error == null)
         {
