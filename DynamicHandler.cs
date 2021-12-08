@@ -381,7 +381,7 @@ public class DynamicHandler : MonoBehaviour
             for (int i = 0; i < targetImage.Length; i++)
             {
                 
-                if(tmpImageBuffer[i] < 30)
+                if(tmpImageBuffer[i] < 20)
                 {
                     tmpImageBuffer[i] = 0;
                 }
