@@ -640,8 +640,12 @@ public class StaticHandler : MonoBehaviour
         //filtering 이슈 때문에 visualition하면서 peakforce의 좌표를 구한다.
         int leftPeakForceVal = 999;
         int leftPeakForceIdx = 0;
+        int leftPeakForceIdxMax = 0;
+        int leftPeakForceIdxMin = 0;
         int rightPeakForceVal = 999;
         int rightPeakForceIdx = 0;
+        int rightPeakForceIdxMax = 0;
+        int rightPeakForceIdxMin = 0;
 
         for (int i = 0; i < resultImage.Length; i++)
         {
@@ -653,17 +657,25 @@ public class StaticHandler : MonoBehaviour
 
             //peakforce
             int value = imageGrayScale[i].r;
-            if (value <= leftPeakForceVal && i % (WIDTH * SCALE) < (WIDTH * SCALE / 2))
+            if (value < leftPeakForceVal && i % (WIDTH * SCALE) < (WIDTH * SCALE / 2))
             {
                 leftPeakForceVal = value;
-                leftPeakForceIdx = i;
+                leftPeakForceIdxMin = i;
+                leftPeakForceIdxMax = i;
             }
-            else if (value <= rightPeakForceVal && i % (WIDTH * SCALE) > (WIDTH * SCALE / 2))
+            else if (value == leftPeakForceVal && i % (WIDTH * SCALE) < (WIDTH * SCALE / 2)){
+                leftPeakForceIdxMax = i;
+            }
+            else if (value < rightPeakForceVal && i % (WIDTH * SCALE) > (WIDTH * SCALE / 2))
             {
                 rightPeakForceVal = value;
-                rightPeakForceIdx = i;
+                rightPeakForceIdxMin = i;
+                rightPeakForceIdxMax = i;
             }
-
+            else if (value == rightPeakForceVal && i % (WIDTH * SCALE) > (WIDTH * SCALE / 2))
+            {
+                rightPeakForceIdxMax = i;
+            }
             if (resultImage[i].r == 0 && resultImage[i].g == 0 && resultImage[i].b == 128)
             {
                 //blank
@@ -703,11 +715,32 @@ public class StaticHandler : MonoBehaviour
         //특징점 페인팅 opencv으로 대체
         if (isStart)
         {
+            
+            //leftPeakForceIdx = (leftPeakForceIdxMax + leftPeakForceIdxMin) / 2;
+            //rightPeakForceIdx = (rightPeakForceIdxMax + rightPeakForceIdxMin) / 2;
+
+            int leftPeakForceMaxX = leftPeakForceIdxMax % (WIDTH * SCALE);
+            int leatPeakForceMaxY = leftPeakForceIdxMax / (WIDTH * SCALE);
+            int leftPeakForceMinX = leftPeakForceIdxMin % (WIDTH * SCALE);
+            int leftPeakForceMinY = leftPeakForceIdxMin / (WIDTH * SCALE);
+
+            int rightPeakForceMaxX = rightPeakForceIdxMax % (WIDTH * SCALE);
+            int rightPeakForceMaxY = rightPeakForceIdxMax / (WIDTH * SCALE);
+            int rightPeakForceMinX = rightPeakForceIdxMin % (WIDTH * SCALE);
+            int rightPeakForceMinY = rightPeakForceIdxMin / (WIDTH * SCALE);
+
+            leftPeakForceX = (leftPeakForceMaxX + leftPeakForceMinX) / 2;
+            leftPeakForceY = (leatPeakForceMaxY + leftPeakForceMinY) / 2;
+            rightPeakForceX = (rightPeakForceMaxX + rightPeakForceMinX) / 2;
+            rightPeakForceY = (rightPeakForceMaxY + rightPeakForceMinY) / 2;
+
+
+            /*
             leftPeakForceX = leftPeakForceIdx % (WIDTH * SCALE);
             leftPeakForceY = leftPeakForceIdx / (WIDTH * SCALE);
             rightPeakForceX = rightPeakForceIdx % (WIDTH * SCALE);
             rightPeakForceY = rightPeakForceIdx / (WIDTH * SCALE);
-
+            */
             leftPeakForceXHistory[StaticframeCount] = leftPeakForceX;
             leftPeakForceYHistory[StaticframeCount] = leftPeakForceY;
             rightPeakForceXHistory[StaticframeCount] = rightPeakForceX;
