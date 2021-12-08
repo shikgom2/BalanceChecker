@@ -121,7 +121,6 @@ public class ExportJSONData : MonoBehaviour
             Array.Sort(StaticHandler.leftFootLengthHistory);
             Array.Sort(StaticHandler.rightFootLengthHistory);
 
-
             float leftArchIndex = 0f;
             float rightArchIndex = 0f;
             float leftPercent = 0f;
@@ -147,7 +146,6 @@ public class ExportJSONData : MonoBehaviour
             float COGY = 0f;
             int count = 0;
             //Median filtering
-            Debug.Log(StaticHandler.StaticframeCount);
 
             for (int i = (int)(StaticHandler.StaticframeCount * 0.2); i <= (int)(StaticHandler.StaticframeCount * 0.8); i++)
             {
@@ -175,7 +173,6 @@ public class ExportJSONData : MonoBehaviour
                 COGY += StaticHandler.COGYHistory[i];
                 count++;
             }
-            Debug.Log(StaticHandler.StaticframeCount);
 
             leftArchIndex /= count;
             rightArchIndex /= count;
