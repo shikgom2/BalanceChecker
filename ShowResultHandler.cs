@@ -230,7 +230,48 @@ public class ShowResultHandler : MonoBehaviour
             }
 
         }
+        int widthavg;
+        int widthmin;
+        int widthmax;
+        int heightavg;
+        int heightmin;
+        int heightmax;
 
+        widthavg = (maxWidth + minWidth) / 2;
+        heightavg = (maxHeight + minHeight) / 2;
+
+        if (widthavg - 130 < 0)
+        {
+            widthmin = 0;
+            widthmax = 260;
+        }
+        else if (widthavg + 130 > 440)
+        {
+            widthmax = 440;
+            widthmin = 180;
+        }
+        else
+        {
+            widthmin = widthavg - 130;
+            widthmax = widthavg + 130;
+        }
+
+        if (heightavg - 220 < 0)
+        {
+            heightmin = 0;
+            heightmax = 440;
+        }
+        else if (heightavg + 220 > 520)
+        {
+            heightmax = 520;
+            heightmin = 80;
+        }
+        else
+        {
+            heightmin = heightavg - 220;
+            heightmax = heightavg + 220;
+        }
+        /*
         int widthavg = (maxWidth + minWidth) / 2;
         int widthmin = widthavg - 130 > 0 ? widthavg - 130 : 0;
         int widthmax = widthmin > 0 ? widthavg + 130 : 260;
@@ -238,8 +279,8 @@ public class ShowResultHandler : MonoBehaviour
         int heightavg = (maxHeight + minHeight) / 2;
         int heightmin = heightavg - 220 > 0 ? heightavg - 220 : 0;
         int heightmax = heightmin > 0 ? heightavg + 220 : 440;
-
-        //Debug.Log("#1 width avg : " + widthavg + " height avg : " + heightavg);
+        */
+        Debug.Log("#1 width avg : " + widthavg + " height avg : " + heightavg);
 
 
         //crop point
@@ -271,7 +312,7 @@ public class ShowResultHandler : MonoBehaviour
         leftCropImage.sprite.texture.SetPixels32(leftCrop);
         leftCropImage.sprite.texture.Apply();
 
-        //Debug.Log("crop length : " + leftCrop.Length + " cropidx : " + cropIdx);
+        Debug.Log("crop length : " + leftCrop.Length + " cropidx : " + cropIdx);
 
         //Right
         int total_right = DynamicHandler.rightIdx - DynamicHandler.leftIdx;
@@ -366,17 +407,53 @@ public class ShowResultHandler : MonoBehaviour
         }
 
         widthavg = (maxWidth + minWidth) / 2;
+        heightavg = (maxHeight + minHeight) / 2;
+
+        if (widthavg - 130 < 0)
+        {
+            widthmin = 0;
+            widthmax = 260;
+        }
+        else if(widthavg + 130 > 440)
+        {
+            widthmax = 440;
+            widthmin = 180;
+        }
+        else
+        {
+            widthmin = widthavg - 130;
+            widthmax = widthavg + 130;
+        }
+
+        if (heightavg - 220 < 0)
+        {
+            heightmin = 0;
+            heightmax = 440;
+        }
+        else if (heightavg + 220 > 520)
+        {
+            heightmax = 520;
+            heightmin = 80;
+        }
+        else
+        {
+            heightmin = heightavg - 220;
+            heightmax = heightavg + 220;
+        }
+        /*
         widthmin = widthavg - 130 > 0 ? widthavg - 130 : 0;
         widthmax = widthmin > 0 ? widthavg + 130 : 260;
+        
 
         heightavg = (maxHeight + minHeight) / 2;
         heightmin = heightavg - 220 > 0 ? heightavg - 220 : 0;
         heightmax = heightmin > 0 ? heightavg + 220 : 440;
-        //Debug.Log("#2 width avg : " + widthavg + " height avg : " + heightavg);
+        */
+
+        Debug.Log("#2 width avg : " + widthavg + " height avg : " + heightavg);
 
         rightResultImage.sprite.texture.SetPixels32(rightResult);
         rightResultImage.sprite.texture.Apply();
-        //crop point
         //crop point
         for (int i = total_right; i < DynamicHandler.rightIdx; i++)
         {
@@ -397,9 +474,11 @@ public class ShowResultHandler : MonoBehaviour
                 rightCrop [cropIdx].b = rightResult[i].b;
 
                 cropIdx++;
-            }
+            }                  
         }
-       // addDynamicResultLine(ref rightCrop, 440, 260, DynamicHandler.COPXHistory, DynamicHandler.COPYHistory, total_right, DynamicHandler.rightIdx);
+        Debug.Log("crop length : " + rightCrop.Length + " cropidx : " + cropIdx);
+
+        // addDynamicResultLine(ref rightCrop, 440, 260, DynamicHandler.COPXHistory, DynamicHandler.COPYHistory, total_right, DynamicHandler.rightIdx);
         rightCropImage.sprite.texture.SetPixels32(rightCrop);
         rightCropImage.sprite.texture.Apply();
 
