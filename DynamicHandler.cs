@@ -411,6 +411,7 @@ public class DynamicHandler : MonoBehaviour
                 }
             }
             //remove noise
+            /*
             for (int i = 0; i<targetImage.Length;i++)
             {
                 /*
@@ -466,8 +467,9 @@ public class DynamicHandler : MonoBehaviour
                     targetImage[i].g = 255;
                     targetImage[i].b = 255;
                 }
-                */
+                
             }
+            */
 
             if (STATUS == (int)MODE.START_LEFT)
             {
@@ -619,7 +621,7 @@ public class DynamicHandler : MonoBehaviour
         int peakForceIdx = 0;
         int peakForceVal = 255;
         int avg = 0;
-
+        double copavg = 0;
         foreach (int idx in visitQueue)
         {
             avg += originalImage[idx].r;
@@ -630,13 +632,18 @@ public class DynamicHandler : MonoBehaviour
                 peakForceIdx = idx;
                 peakForceVal = originalImage[idx].r;
             }
-            copX += (idx % WIDTH);
-            copY += (idx / WIDTH);
+            copX += (idx % WIDTH) * (255 - originalImage[idx].r); //좌표 * 값으로 가중치;
+            copY += (idx / WIDTH) * (255 - originalImage[idx].r);
+
+            copavg = copavg + (255 - originalImage[idx].r);
         }
 
         //COP
-        copX /= visitQueue.Count();
-        copY /= visitQueue.Count();
+        copX = (int)(copX / copavg);
+        copY = (int)(copY / copavg);
+
+        //copX /= visitQueue.Count();
+        //copY /= visitQueue.Count();
 
         COPX = copX * SCALE;
         COPY = copY * SCALE;
@@ -682,7 +689,7 @@ public class DynamicHandler : MonoBehaviour
             resultImage2[i].g = resultImage[i].g / 255f;
             resultImage2[i].b = resultImage[i].b / 255f;
 
-            if (resultImage[i].r == 0 && resultImage[i].g == 0 && resultImage[i].b > 110)
+            if (resultImage[i].r == 0 && resultImage[i].g == 0 && resultImage[i].b > 110)   //default Image
             {
 
                 resultImage[i].r = 34;
