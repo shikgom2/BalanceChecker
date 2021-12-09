@@ -527,13 +527,13 @@ public class StaticHandler : MonoBehaviour
 
             if (FOOT_TYPE == "LEFT")
             {
-                leftcopX = leftcopX + (idx % WIDTH) * originalImage[idx].r; //좌표 * 값으로 가중치
-                leftcopY = leftcopY + (idx / WIDTH) * originalImage[idx].r;
+                leftcopX = leftcopX + (idx % WIDTH) * (255-originalImage[idx].r); //좌표 * 값으로 가중치
+                leftcopY = leftcopY + (idx / WIDTH) * (255-originalImage[idx].r);
             }
             else if (FOOT_TYPE == "RIGHT")
             {
-                rightcopX = rightcopX + (idx % WIDTH) * originalImage[idx].r;
-                rightcopY = rightcopY + (idx / WIDTH) * originalImage[idx].r;
+                rightcopX = rightcopX + (idx % WIDTH) * (255-originalImage[idx].r);
+                rightcopY = rightcopY + (idx / WIDTH) * (255-originalImage[idx].r);
             }
 
             if (FOOT_TYPE == "LEFT")
@@ -549,8 +549,8 @@ public class StaticHandler : MonoBehaviour
                 detectedImage[idx].b = 128;
             }
 
-           detectedImage[idx].g = 0;
-           detectedImage[idx].b = 0;
+            detectedImage[idx].g = 0;
+            detectedImage[idx].b = 0;
 
 
             //GET TOP BOTTOM
@@ -580,7 +580,7 @@ public class StaticHandler : MonoBehaviour
                 }
                 
             }
-            copavg += originalImage[idx].r;
+            copavg += (255-originalImage[idx].r);
 
         }
         minIdx /= WIDTH;
@@ -594,6 +594,7 @@ public class StaticHandler : MonoBehaviour
         {
             leftCOPX = (int)(leftcopX / copavg) * 10;
             leftCOPY = (int)(leftcopY / copavg) * 10;
+
             leftCOPXHistory[StaticframeCount] = leftCOPX;
             leftCOPYHistory[StaticframeCount] = leftCOPY;
 
@@ -625,7 +626,6 @@ public class StaticHandler : MonoBehaviour
         var interpolationImage = imageInterpolation.sprite.texture.GetPixels32();
         var cannyImage = imageCanny.sprite.texture.GetPixels32();
 
-        
         addImage(ref interpolationImage, ref cannyImage, ref resultImage, WIDTH, HEIGHT, SCALE);
         
         COGX = (leftCOPX + rightCOPX) / 2;
@@ -655,7 +655,7 @@ public class StaticHandler : MonoBehaviour
             resultImage2[i].b = resultImage[i].b / 255f;
             resultImage2[i].a = 1f;
 
-            //peakforce
+            //PeakForce좌표 관련해서 같은 색상의 픽셀의 최소,최대값을 구해 평균내는식으로 변경
             int value = imageGrayScale[i].r;
             if (value < leftPeakForceVal && i % (WIDTH * SCALE) < (WIDTH * SCALE / 2))
             {
@@ -719,6 +719,7 @@ public class StaticHandler : MonoBehaviour
             //leftPeakForceIdx = (leftPeakForceIdxMax + leftPeakForceIdxMin) / 2;
             //rightPeakForceIdx = (rightPeakForceIdxMax + rightPeakForceIdxMin) / 2;
 
+            //PeakForce좌표 관련해서 같은 색상의 픽셀의 최소,최대값을 구해 평균내는식으로 변경
             int leftPeakForceMaxX = leftPeakForceIdxMax % (WIDTH * SCALE);
             int leatPeakForceMaxY = leftPeakForceIdxMax / (WIDTH * SCALE);
             int leftPeakForceMinX = leftPeakForceIdxMin % (WIDTH * SCALE);
