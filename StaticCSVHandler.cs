@@ -127,8 +127,34 @@ public class StaticCSVHandler : MonoBehaviour
                 staticImage[i].g = ((byte)(255 - value));
                 staticImage[i].b = ((byte)(255 - value));
             }
-
         }
+
+        //remove noise
+        for (int i = 0; i < staticImage.Length; i++)
+        {
+            int topleft = (i - StaticHandler.WIDTH - 1) > 0 ? (i - StaticHandler.WIDTH - 1) : 0;
+            int topright = (i - StaticHandler.WIDTH + 1) > 0 ? (i - StaticHandler.WIDTH + 1) : 0;
+            int bottomleft = (i + StaticHandler.WIDTH - 1) < StaticHandler.WIDTH * StaticHandler.HEIGHT ? (i + StaticHandler.WIDTH - 1) : StaticHandler.WIDTH * StaticHandler.HEIGHT - 1;
+            int bottomright = (i + StaticHandler.WIDTH + 1) < StaticHandler.WIDTH * StaticHandler.HEIGHT ? (i + StaticHandler.WIDTH + 1) : StaticHandler.WIDTH * StaticHandler.HEIGHT - 1;
+
+            int left = (i - 1) > 0 ? (i - 1) : 0;
+            int right = (i + 1) < StaticHandler.WIDTH * StaticHandler.HEIGHT ? (i + 1) : StaticHandler.WIDTH * StaticHandler.HEIGHT - 1;
+            int top = (i - StaticHandler.WIDTH) > 0 ? (i - StaticHandler.WIDTH) : 0;
+            int bottom = (i + StaticHandler.WIDTH) < StaticHandler.WIDTH * StaticHandler.HEIGHT ? (i + StaticHandler.WIDTH) : StaticHandler.WIDTH * StaticHandler.HEIGHT - 1;
+
+            if (staticImage[topleft].r == 255 && staticImage[topright].r == 255 && staticImage[bottomleft].r == 255 && staticImage[bottomright].r == 255 &&
+                staticImage[left].r == 255 && staticImage[right].r == 255 && staticImage[top].r == 255 && staticImage[bottom].r == 255)
+            {
+                staticImage[i].r = 255;
+                staticImage[i].g = 255;
+                staticImage[i].b = 255;
+
+                staticImage[i].r = 255;
+                staticImage[i].g = 255;
+                staticImage[i].b = 255;
+            }
+        }
+
         staticResultImage.sprite.texture.SetPixels32(staticImage);
         staticResultImage.sprite.texture.Apply();
 
