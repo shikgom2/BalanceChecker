@@ -135,6 +135,7 @@ public class DynamicHandler : MonoBehaviour
 
     private void Awake()
     {
+        Close();
         startButton.onClick.AddListener(startMeasuring);
         showStaticButton.onClick.AddListener(showStatic);
         //mainButton.onClick.AddListener(showStatic);
