@@ -78,6 +78,7 @@ public class StaticButtonHandler : MonoBehaviour {
 
     #endregion
     private void Awake () {
+        Close();
         inPlayMode = true;
         StaticVaribleHandler.isEndStatic = false;
         StaticHandler.isStart = false;
@@ -295,7 +296,6 @@ public class StaticButtonHandler : MonoBehaviour {
         }
         WWW www = new WWW(StartBalancecheckerHandler.SetMeasuring, form);
         yield return www;
-        Debug.Log("isMeasuring 세팅 결과: " + www.text);
     }
     IEnumerator Rendering () {
         if (!isCapturing && !isRecording && !isDebuging) {
