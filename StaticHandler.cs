@@ -29,16 +29,15 @@ public class StaticHandler : MonoBehaviour
     private static extern void interpolationTexture(ref Color32[] rawImage, ref Color32[] interpolationImage, int width, int height, double widthScale, double heightScale, int flag);
 
     [DllImport("OpenCVDLL")]
-    private static extern void interpolationTextureGaussianBlur(ref Color32[] rawImage, ref Color32[] interpolationImage, int width, int height, double widthScale, double heightScale, int flag);
+    private static extern void interpolationTextureGaussianBlur(ref Color32[] rawImage, ref Color32[] interpolationImage, ref Color32[] resultGrayScaleImage, int width, int height, double widthScale, double heightScale, int flag);
     [DllImport("OpenCVDLL")]
     private static extern void getCannyEdge(ref Color32[] rawImage, ref Color32[] interpolationImage, int width, int height, int scale);
-    [DllImport("OpenCVDLL")]
-    private static extern void addWeightPoint(ref Color32[] rawImage, int width, int height, int scale, int COGX, int COGY, int leftCOPX, int leftCOPY, int rightCOPX, int rightCOPY);
+
     [DllImport("OpenCVDLL")]
     private static extern void addImage(ref Color32[] rawImage, ref Color32[] rawImage2, ref Color32[] returnImage, int width, int height, int scale);
 
     [DllImport("OpenCVDLL")]
-    private static extern void addText(ref Color32[] rawImage, int width, int height, int scale, int leftCOPX, int leftCOPY, int rightCOPX, int rightCOPY, int leftPeakForceX, int leftPeakForceY, int rightPeakForceX, int rightPeakForceY, int COGX, int COGY);
+    private static extern void addText(ref Color32[] rawImage, int width, int height, int scale, int leftCOPX, int leftCOPY, int rightCOPX, int rightCOPY, int leftPeakForceX, int leftPeakForceY, int rightPeakForceX, int rightPeakForceY, int COGX, int COGY, int noWeightCOGX, int noWeightCOGY);
 
     //Close Device 
     [DllImport("Multi-TeeTester-API")]
@@ -401,8 +400,8 @@ public class StaticHandler : MonoBehaviour
                     break;
                 }
             }
-            interpolationTextureGaussianBlur(ref targetImage, ref resultGrayScaleImage, WIDTH, HEIGHT, SCALE, SCALE, 0);
-            interpolationTextureGaussianBlur(ref targetImage, ref interpolationImage, WIDTH, HEIGHT, SCALE, SCALE, 1);
+            //interpolationTextureGaussianBlur(ref targetImage, ref resultGrayScaleImage, WIDTH, HEIGHT, SCALE, SCALE, 0);
+            interpolationTextureGaussianBlur(ref targetImage, ref interpolationImage, ref resultGrayScaleImage, WIDTH, HEIGHT, SCALE, SCALE, 1);
 
             imageResultGrayScale.sprite.texture.SetPixels32(resultGrayScaleImage);
             imageResultGrayScale.sprite.texture.Apply();
@@ -464,9 +463,7 @@ public class StaticHandler : MonoBehaviour
             imageDetected.sprite.texture.SetPixels32(detectedImage);
             imageDetected.sprite.texture.Apply();
 
-            interpolationTextureGaussianBlur(ref targetImage, ref interpolationImage, WIDTH, HEIGHT, SCALE, SCALE, 1);
-
-            addImage(ref interpolationImage, ref cannyImage, ref resultImage, WIDTH, HEIGHT, SCALE);
+            interpolationTexture(ref targetImage, ref interpolationImage, WIDTH, HEIGHT, SCALE, SCALE, 1);
 
             var resultImage2 = imageResult.sprite.texture.GetPixels();
             for (int i = 0; i < resultImage.Length; i++)
@@ -622,8 +619,8 @@ public class StaticHandler : MonoBehaviour
         //get input count
         if (FOOT_TYPE == "LEFT")
         {
-            leftCOPX = (int)(leftcopX / copavg) * 10;
-            leftCOPY = (int)(leftcopY / copavg) * 10;
+            leftCOPX = (int)(leftcopX / copavg) * SCALE;
+            leftCOPY = (int)(leftcopY / copavg) * SCALE;
 
             noWeightleftcopX /= leftCount;
             noWeightleftcopY /= leftCount;
@@ -632,13 +629,11 @@ public class StaticHandler : MonoBehaviour
             leftCOPYHistory[StaticframeCount] = leftCOPY;
 
             leftAreaCountHistory[StaticframeCount] = visitQueue.Count();
-            //Debug.Log("LEFT PIXEL COUNT : " + visitQueue.Count() + " VALUE SUM : " + avg);
-
         }
         else if(FOOT_TYPE == "RIGHT")
         {
-            rightCOPX = (int)(rightcopX / copavg) * 10;
-            rightCOPY = (int)(rightcopY / copavg) * 10;
+            rightCOPX = (int)(rightcopX / copavg) * SCALE;
+            rightCOPY = (int)(rightcopY / copavg) * SCALE;
 
             noWeightrightcopX /= rightCount;
             noWeightrightcopY /= rightCount;
@@ -661,13 +656,9 @@ public class StaticHandler : MonoBehaviour
         var resultImage = imageResult.sprite.texture.GetPixels32();
         var interpolationImage = imageInterpolation.sprite.texture.GetPixels32();
         var cannyImage = imageCanny.sprite.texture.GetPixels32();
-
-        addImage(ref interpolationImage, ref cannyImage, ref resultImage, WIDTH, HEIGHT, SCALE);
-
-        //COGX = (leftCOPX + rightCOPX) / 2;
-        //COGY = (leftCOPY + rightCOPY) / 2;
-        COGX = (int)(cogpointX / cogavg) * 10;
-        COGY = (int)(cogpointY / cogavg) * 10;
+        
+        COGX = (int)(cogpointX / cogavg) * SCALE;
+        COGY = (int)(cogpointY / cogavg) * SCALE;
         int noWeightCOGX;
         int noWeightCOGY;
 
@@ -690,6 +681,10 @@ public class StaticHandler : MonoBehaviour
 
         for (int i = 0; i < resultImage.Length; i++)
         {
+            resultImage[i].r = interpolationImage[i].r;
+            resultImage[i].g = interpolationImage[i].g;
+            resultImage[i].b = interpolationImage[i].b;
+
             resultImage2[i].r = resultImage[i].r / 255f;
             resultImage2[i].g = resultImage[i].g / 255f;
             resultImage2[i].b = resultImage[i].b / 255f;
@@ -716,6 +711,7 @@ public class StaticHandler : MonoBehaviour
             {
                 rightPeakForceIdxMax = i;
             }
+            resultImage[i].a = 255;
             if (resultImage[i].r == 0 && resultImage[i].g == 0 && resultImage[i].b == 128)
             {
                 //blank
@@ -755,10 +751,6 @@ public class StaticHandler : MonoBehaviour
         //특징점 페인팅 opencv으로 대체
         if (isStart)
         {
-            
-            //leftPeakForceIdx = (leftPeakForceIdxMax + leftPeakForceIdxMin) / 2;
-            //rightPeakForceIdx = (rightPeakForceIdxMax + rightPeakForceIdxMin) / 2;
-
             //PeakForce좌표 관련해서 같은 색상의 픽셀의 최소,최대값을 구해 평균내는식으로 변경
             int leftPeakForceMaxX = leftPeakForceIdxMax % (WIDTH * SCALE);
             int leatPeakForceMaxY = leftPeakForceIdxMax / (WIDTH * SCALE);
@@ -775,36 +767,16 @@ public class StaticHandler : MonoBehaviour
             rightPeakForceX = (rightPeakForceMaxX + rightPeakForceMinX) / 2;
             rightPeakForceY = (rightPeakForceMaxY + rightPeakForceMinY) / 2;
 
-
-            /*
-            leftPeakForceX = leftPeakForceIdx % (WIDTH * SCALE);
-            leftPeakForceY = leftPeakForceIdx / (WIDTH * SCALE);
-            rightPeakForceX = rightPeakForceIdx % (WIDTH * SCALE);
-            rightPeakForceY = rightPeakForceIdx / (WIDTH * SCALE);
-            */
             leftPeakForceXHistory[StaticframeCount] = leftPeakForceX;
             leftPeakForceYHistory[StaticframeCount] = leftPeakForceY;
             rightPeakForceXHistory[StaticframeCount] = rightPeakForceX;
             rightPeakForceYHistory[StaticframeCount] = rightPeakForceY;
 
-            addText(ref resultImage, WIDTH, HEIGHT, SCALE, leftCOPX, leftCOPY, rightCOPX, rightCOPY, leftPeakForceX, leftPeakForceY, rightPeakForceX, rightPeakForceY, COGX, COGY);
-
-            addWeightPoint(ref resultImage, WIDTH, HEIGHT, SCALE, noWeightCOGX, noWeightCOGY, noWeightleftcopX, noWeightleftcopY, noWeightrightcopX, noWeightrightcopY);
+            addText(ref resultImage, WIDTH, HEIGHT, SCALE, leftCOPX, leftCOPY, rightCOPX, rightCOPY, leftPeakForceX, leftPeakForceY, rightPeakForceX, rightPeakForceY, COGX, COGY, noWeightCOGX, noWeightCOGY);
             StaticframeCount++;
             currentBar.value = (float)StaticframeCount / StaticVaribleHandler.MaximumStaticFrameCount;
             timeText.text = Convert.ToInt32(Time.time - startTime) + " sec".ToString();
-            /*
-            for (int i = 0; i < resultImage.Length; i++)
-            {
-                if (resultImage[i].r == 0 && resultImage[i].g == 0 && resultImage[i].b == 128)
-                {
-                    //blank
-                    resultImage[i].r = 34;
-                    resultImage[i].g = 46;
-                    resultImage[i].b = 56;
-                }
-            }
-            */
+
             imageResult.sprite.texture.SetPixels32(resultImage);
             imageResult.sprite.texture.Apply();
         }
