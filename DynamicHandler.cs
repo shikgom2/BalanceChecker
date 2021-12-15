@@ -30,13 +30,11 @@ public class DynamicHandler : MonoBehaviour
     [DllImport("OpenCVDLL")]
     private static extern void interpolationTexture(ref Color32[] rawImage, ref Color32[] interpolationImage, int width, int height, double widthScale, double heightScale, int flag);
     [DllImport("OpenCVDLL")]
-    private static extern void interpolationTextureGaussianBlur(ref Color32[] rawImage, ref Color32[] interpolationImage, int width, int height, double widthScale, double heightScale, int flag);
-    [DllImport("OpenCVDLL")]
-    private static extern void getCannyEdge(ref Color32[] rawImage, ref Color32[] interpolationImage, int width, int height, int scale);
-    [DllImport("OpenCVDLL")]
     private static extern void addImage(ref Color32[] rawImage, ref Color32[] rawImage2, ref Color32[] returnImage, int width, int height, int scale);
     [DllImport("OpenCVDLL")]
     private static extern void addText(ref Color32[] rawImage, int width, int height, int scale, int leftCOPX, int leftCOPY, int rightCOPX, int rightCOPY, int leftPeakForceX, int leftPeakForceY, int rightPeakForceX, int rightPeakForceY, int COGX, int COGY);
+    [DllImport("OpenCVDLL")]
+    private static extern void clearImage(ref Color32[] rawImage, ref Color32[] clearImage, int width, int height, int scale);
     [DllImport("OpenCVDLL")]
     private static extern void addDynamicText(ref Color32[] rawImage, int width, int height, int scale, int COPX, int COPY, int PeakForceX, int PeakForceY, int[] COPXHistory, int[] COPYHistory, int[] PeakForceXHistory, int[] PeakForceYHistory, int frameStart, int frameEnd);
     #endregion
@@ -313,6 +311,9 @@ public class DynamicHandler : MonoBehaviour
 
         currentTime += Time.deltaTime;
 
+        isValueExist = false;
+        int pixelCount = 0;
+        //check noise
         //mapping
         for (int i = 0; i < rawDataBuffer.Length; i++)
         {
@@ -323,13 +324,7 @@ public class DynamicHandler : MonoBehaviour
             int heightIndex = StaticVaribleHandler.heightMappingArray[arrayheight];
 
             tmpImageBuffer[(heightIndex * WIDTH) + widthIndex] = rawDataBuffer[i];
-        }
 
-        isValueExist = false;
-        int pixelCount = 0;
-        //check noise
-        for (int i = 0; i < tmpImageBuffer.Length; i++)
-        {
             if (tmpImageBuffer[i] != 0)
             {
                 isValueExist = true;
@@ -517,7 +512,7 @@ public class DynamicHandler : MonoBehaviour
                 }
             }
 
-            interpolationTextureGaussianBlur(ref targetImage, ref interpolationImage, WIDTH, HEIGHT, SCALE, SCALE, 1);
+            interpolationTexture(ref targetImage, ref interpolationImage, WIDTH, HEIGHT, SCALE, SCALE, 1);
             imageInterpolation.sprite.texture.SetPixels32(interpolationImage);
             imageInterpolation.sprite.texture.Apply();
             makeWeightImage();
@@ -580,16 +575,13 @@ public class DynamicHandler : MonoBehaviour
             imageDetected.sprite.texture.SetPixels32(detectedImage);
             imageDetected.sprite.texture.Apply();
 
-            interpolationTextureGaussianBlur(ref targetImage, ref interpolationImage, WIDTH, HEIGHT, SCALE, SCALE, 1);
-            addImage(ref interpolationImage, ref cannyImage, ref resultImage, WIDTH, HEIGHT, SCALE);
+            //interpolationTexture(ref targetImage, ref interpolationImage, WIDTH, HEIGHT, SCALE, SCALE, 1);
+            clearImage(ref interpolationImage, ref resultImage, WIDTH, HEIGHT, SCALE);
             for(int i = 0; i < resultImage.Length; i++)
             {
-                if(resultImage[i].r == 0 && resultImage[i].g == 0 && resultImage[i].b == 128)
-                {
-                    resultImage[i].r = 34;
-                    resultImage[i].g = 46;
-                    resultImage[i].b = 56;
-                }
+                resultImage[i].r = 34;
+                resultImage[i].g = 46;
+                resultImage[i].b = 56;
             }
             imageResult.sprite.texture.SetPixels32(resultImage);
             imageResult.sprite.texture.Apply();
@@ -659,7 +651,6 @@ public class DynamicHandler : MonoBehaviour
 
         imageDetected.sprite.texture.SetPixels32(detectedImage);
         imageDetected.sprite.texture.Apply();
-        getCannyEdge(ref detectedImage, ref cannyImage, WIDTH, HEIGHT, SCALE);
         imageCanny.sprite.texture.SetPixels32(cannyImage);
         imageCanny.sprite.texture.Apply();
     }
@@ -670,22 +661,23 @@ public class DynamicHandler : MonoBehaviour
         var interpolationImage = imageInterpolation.sprite.texture.GetPixels32();
         var cannyImage = imageCanny.sprite.texture.GetPixels32();
 
-        addImage(ref interpolationImage, ref cannyImage, ref resultImage, WIDTH, HEIGHT, SCALE);
-
-        for (int i = 0; i < resultImage.Length; i++)
-        {
-            if (resultImage[i].r == 128 && resultImage[i].g == 128 && resultImage[i].b == 128)
-            {
-                resultImage[i].r = 255;
-                resultImage[i].g = 255;
-                resultImage[i].b = 255;
-            }
-        }
         //특징점 페인팅 opencv으로 대체
 
         var resultImage2 = imageResult.sprite.texture.GetPixels();
         for (int i = 0; i < resultImage.Length; i++)
         {
+            resultImage[i].r = interpolationImage[i].r;
+            resultImage[i].g = interpolationImage[i].g;
+            resultImage[i].b = interpolationImage[i].b;
+
+            if (resultImage[i].r == 128 && resultImage[i].g == 128 && resultImage[i].b == 128)
+            {
+                resultImage[i].r = 255;
+                resultImage[i].g = 255;
+                resultImage[i].b = 255;
+
+            }
+
             resultImage2[i].r = resultImage[i].r / 255f;
             resultImage2[i].g = resultImage[i].g / 255f;
             resultImage2[i].b = resultImage[i].b / 255f;
