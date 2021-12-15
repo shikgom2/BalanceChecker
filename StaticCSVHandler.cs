@@ -22,9 +22,6 @@ public class StaticCSVHandler : MonoBehaviour
     [DllImport("OpenCVDLL")]
     private static extern void interpolationTexture(ref Color32[] rawImage, ref Color32[] interpolationImage, int width, int height, double widthScale, double heightScale, int flag);
 
-    [DllImport("OpenCVDLL")]
-    private static extern void interpolationTextureGaussianBlur(ref Color32[] rawImage, ref Color32[] interpolationImage, int width, int height, double widthScale, double heightScale, int flag);
-
     public Text currentFrameText;
     public Image frameImage;
     public Image pixelImage;
@@ -158,8 +155,8 @@ public class StaticCSVHandler : MonoBehaviour
         staticResultImage.sprite.texture.SetPixels32(staticImage);
         staticResultImage.sprite.texture.Apply();
 
-        interpolationTextureGaussianBlur(ref staticImage, ref interpolationImage, StaticHandler.WIDTH, StaticHandler.HEIGHT, StaticHandler.SCALE, StaticHandler.SCALE, 1);
-        for(int i = 0; i<interpolationImage.Length;i++)
+        interpolationTexture(ref staticImage, ref interpolationImage, StaticHandler.WIDTH, StaticHandler.HEIGHT, StaticHandler.SCALE, StaticHandler.SCALE, 1);
+        for (int i = 0; i<interpolationImage.Length;i++)
         {
             if(interpolationImage[i].r == 0 && interpolationImage[i].g == 0 && interpolationImage[i].b == 128)
             {
