@@ -772,7 +772,7 @@ public class StaticHandler : MonoBehaviour
             rightPeakForceXHistory[StaticframeCount] = rightPeakForceX;
             rightPeakForceYHistory[StaticframeCount] = rightPeakForceY;
 
-            addText(ref resultImage, WIDTH, HEIGHT, SCALE, leftCOPX, leftCOPY, rightCOPX, rightCOPY, leftPeakForceX, leftPeakForceY, rightPeakForceX, rightPeakForceY, COGX, COGY, noWeightCOGX, noWeightCOGY);
+            //addText(ref resultImage, WIDTH, HEIGHT, SCALE, leftCOPX, leftCOPY, rightCOPX, rightCOPY, leftPeakForceX, leftPeakForceY, rightPeakForceX, rightPeakForceY, COGX, COGY, noWeightCOGX, noWeightCOGY);
             StaticframeCount++;
             currentBar.value = (float)StaticframeCount / StaticVaribleHandler.MaximumStaticFrameCount;
             timeText.text = Convert.ToInt32(Time.time - startTime) + " sec".ToString();
