@@ -283,8 +283,8 @@ public class DynamicHandler : MonoBehaviour
         DynamicFrameRecordArray = new byte[100, 2288];
         SetPowA(40);    //set sensivity
 
-        //Display.displays[0].Activate(1920, 1080, 60);
-        //Display.displays[1].Activate(1920, 1080, 60);
+        Display.displays[0].Activate(1920, 1080, 60);
+        Display.displays[1].Activate(1920, 1080, 60);
 
         Close();
     }
