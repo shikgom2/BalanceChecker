@@ -302,7 +302,7 @@ public class StaticVaribleHandler : MonoBehaviour
         int[] maxHeightArray = new int[WIDTH];
         int max = 0;
         int maxidx = 0;
-        int startidx = 0;
+        int startidx = 999;
         int endidx = 0;
 
         foreach (int idx in q)
@@ -341,7 +341,15 @@ public class StaticVaribleHandler : MonoBehaviour
             {
                 max = height;
                 maxidx = i;
+                //startidx = start;
+                //endidx = end;
+            }
+            if(startidx > start && height != 0)
+            {
                 startidx = start;
+            }
+            if(endidx < end && height != 0)
+            {
                 endidx = end;
             }
         }
