@@ -63,8 +63,8 @@ public class StartBalancecheckerHandler : MonoBehaviour
         //closeButton.onClick.AddListener(closeDevice);
         StartCoroutine(getPatientStatus());
 
-        //Display.displays[0].Activate(1920, 1080, 60);
-        //Display.displays[1].Activate(1920, 1080, 60);
+        Display.displays[0].Activate(1920, 1080, 60);
+        Display.displays[1].Activate(1920, 1080, 60);
 
     }
 
