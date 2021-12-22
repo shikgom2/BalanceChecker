@@ -156,7 +156,9 @@ public class StaticButtonHandler : MonoBehaviour {
             GameObject.Find("btn1").GetComponent<Image>().sprite = button1Disable;
             StaticVaribleHandler.isEndStatic = true;
             Close();
-            //StartCoroutine("goDynamicScene");
+
+
+            StartCoroutine("goDynamicScene");
         }
         //EventHandler();
     }
