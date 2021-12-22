@@ -341,7 +341,10 @@ public class ExportJSONData : MonoBehaviour
                 resultJSon += dynamicResultjson;
                 resultJSon += "]}";
 
-                string fullpth = "C:/AutoSet10/public_html/balanceCheckerImage/" + StaticVaribleHandler.currentKinectCode.Substring(0, 7) + ".json";
+                //"C:/AutoSet10/public_html/balanceCheckerImage/" + StaticVaribleHandler.currentKinectCode.Substring(0, 7) + ".json";
+                // C:/Users/admin/Desktop/flaskProject/data.csv                " + StaticVaribleHandler.currentKinectCode.Substring(0, 7) + ".json";
+
+                string fullpth = "C:/Users/admin/Desktop/flaskProject/" + StaticVaribleHandler.currentKinectCode.Substring(0, 7) + ".json";
                 Debug.Log(fullpth);
                 if (!File.Exists(fullpth))
                 {
