@@ -136,8 +136,8 @@ public class StaticHandler : MonoBehaviour
     // Start is called before the first frame update
     void Start()
     {
-        //Display.displays[0].Activate(1920, 1080, 60);
-        //Display.displays[1].Activate(1920, 1080, 60);
+        Display.displays[0].Activate(1920, 1080, 60);
+        Display.displays[1].Activate(1920, 1080, 60);
 
         //getComponents
 
@@ -191,7 +191,7 @@ public class StaticHandler : MonoBehaviour
             startTime = Time.time;
         }
         byte[] rawDataBuffer = new byte[WIDTH * HEIGHT];
-        SetPowA(80);
+        SetPowA(40);
         CollectFrame(rawDataBuffer);    //SAVE BUFFER
 
         var leftAvg = new Tuple<double, double, double,int>(0,0, 0, 0);
@@ -521,7 +521,7 @@ public class StaticHandler : MonoBehaviour
         int footLength = maxHeight.Item1;
         int footTop = maxHeight.Item3;
         int footBottom = maxHeight.Item4;
-
+        //Debug.Log("FOOT_TYPE : " + FOOT_TYPE + " TOP : " + footTop + " BOTTOM : " + footBottom);
         int minIdx = 9999;
         int maxIdx = -1;
 
@@ -772,7 +772,7 @@ public class StaticHandler : MonoBehaviour
             rightPeakForceXHistory[StaticframeCount] = rightPeakForceX;
             rightPeakForceYHistory[StaticframeCount] = rightPeakForceY;
 
-            //addText(ref resultImage, WIDTH, HEIGHT, SCALE, leftCOPX, leftCOPY, rightCOPX, rightCOPY, leftPeakForceX, leftPeakForceY, rightPeakForceX, rightPeakForceY, COGX, COGY, noWeightCOGX, noWeightCOGY);
+            addText(ref resultImage, WIDTH, HEIGHT, SCALE, leftCOPX, leftCOPY, rightCOPX, rightCOPY, leftPeakForceX, leftPeakForceY, rightPeakForceX, rightPeakForceY, COGX, COGY, noWeightCOGX, noWeightCOGY);
             StaticframeCount++;
             currentBar.value = (float)StaticframeCount / StaticVaribleHandler.MaximumStaticFrameCount;
             timeText.text = Convert.ToInt32(Time.time - startTime) + " sec".ToString();
