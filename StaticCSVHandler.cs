@@ -61,7 +61,7 @@ public class StaticCSVHandler : MonoBehaviour
         //make load csv
         // C:/Users/admin/Desktop/flaskProject/data.csv
         // C:/Users/Carly/PycharmProjects/flaskProject/data.csv
-        using (var writer = new CsvFileWriter("C:/Users/Carly/PycharmProjects/flaskProject/data.csv"))
+        using (var writer = new CsvFileWriter("C:/Users/admin/Desktop/flaskProject/data.csv"))
         {
             List<string> columns = new List<string>();
             columns.Clear();
@@ -418,18 +418,9 @@ public class StaticCSVHandler : MonoBehaviour
                 footTop = rightMaxY + 1;
             }
         }
-
+        Debug.Log("FOOT_TYPE : " + FOOT_TYPE + " TOP : " + footTop + " BOTTOM : " + footBottom);
         foreach (int idx in visitQueue)
         {
-            if (FOOT_TYPE == "LEFT" && leftToeList.Contains(idx))
-            {
-                originalImage[idx].r = 255;
-            }
-            else if (FOOT_TYPE == "RIGHT" && rightToeList.Contains(idx))
-            {
-                originalImage[idx].r = 255;
-            }
-
             //GET ARCH
             if(idx / WIDTH <= footTop)
             {
@@ -454,7 +445,7 @@ public class StaticCSVHandler : MonoBehaviour
             originalImage[idx].g = 0;
             originalImage[idx].b = 0;
         }
-
+        Debug.Log("ArchB : " + archB + " All : " + (archA + archB + archC));
         archIndex = Math.Round(archB / (double)(archA + archB + archC), 2);
         if(FOOT_TYPE == "LEFT")
         {
