@@ -521,7 +521,7 @@ public class StaticHandler : MonoBehaviour
         int footLength = maxHeight.Item1;
         int footTop = maxHeight.Item3;
         int footBottom = maxHeight.Item4;
-        //Debug.Log("FOOT_TYPE : " + FOOT_TYPE + " TOP : " + footTop + " BOTTOM : " + footBottom);
+        //("FOOT_TYPE : " + FOOT_TYPE + " TOP : " + footTop + " BOTTOM : " + footBottom);
         int minIdx = 9999;
         int maxIdx = -1;
 
