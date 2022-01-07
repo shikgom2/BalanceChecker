@@ -344,8 +344,7 @@ public class ExportJSONData : MonoBehaviour
                 //"C:/AutoSet10/public_html/balanceCheckerImage/" + StaticVaribleHandler.currentKinectCode.Substring(0, 7) + ".json";
                 // C:/Users/admin/Desktop/flaskProject/data.csv                " + StaticVaribleHandler.currentKinectCode.Substring(0, 7) + ".json";
 
-                string fullpth = "C:/Users/admin/Desktop/flaskProject/data.csv";
-                Debug.Log(fullpth);
+                string fullpth = "./result.csv";
                 if (!File.Exists(fullpth))
                 {
                     var file = File.CreateText(fullpth);
