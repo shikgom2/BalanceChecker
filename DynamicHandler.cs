@@ -385,7 +385,7 @@ public class DynamicHandler : MonoBehaviour
                 targetImage[i].g = (byte)(255 - tmpImageBuffer[i]);
                 targetImage[i].b = (byte)(255 - tmpImageBuffer[i]);
 
-                if (targetImage[i].r != 255 || targetImage[i].g != 255 || targetImage[i].b != 255)
+                if (tmpImageBuffer[i] != 0)
                 {
                     detectedImage[i].r = 0;
                     detectedImage[i].g = 0;
@@ -407,7 +407,7 @@ public class DynamicHandler : MonoBehaviour
                 }
             }
             //remove noise
-            /*
+            
             for (int i = 0; i<targetImage.Length;i++)
             {
                 /*
@@ -440,7 +440,7 @@ public class DynamicHandler : MonoBehaviour
                     targetImage[i].g = 255;
                     targetImage[i].b = 255;
                 }
-                
+                */
                 
                 int topleft = (i - StaticHandler.WIDTH - 1) > 0 ? (i - StaticHandler.WIDTH - 1) : 0;
                 int topright = (i - StaticHandler.WIDTH + 1) > 0 ? (i - StaticHandler.WIDTH + 1) : 0;
@@ -465,7 +465,7 @@ public class DynamicHandler : MonoBehaviour
                 }
                 
             }
-            */
+            
 
             if (STATUS == (int)MODE.START_LEFT)
             {
@@ -613,17 +613,14 @@ public class DynamicHandler : MonoBehaviour
         int copY = 0;
         int peakForceIdx = 0;
         int peakForceVal = 255;
-        int avg = 0;
         double copavg = 0;
         foreach (int idx in visitQueue)
         {
-            avg += originalImage[idx].r;
-
             //GET MAX VALUE
-            if (peakForceVal > originalImage[idx].r)
+            if (peakForceVal > (255-originalImage[idx].r))
             {
                 peakForceIdx = idx;
-                peakForceVal = originalImage[idx].r;
+                peakForceVal = (255-originalImage[idx].r);
             }
             copX += (idx % WIDTH) * (255 - originalImage[idx].r); //좌표 * 값으로 가중치;
             copY += (idx / WIDTH) * (255 - originalImage[idx].r);
@@ -697,10 +694,12 @@ public class DynamicHandler : MonoBehaviour
         }
         if (STATUS == (int)MODE.START_LEFT)
         {
+            Debug.Log(resultImage[PeakForceX * SCALE + PeakForceY]);
             addDynamicText(ref resultImage, WIDTH, HEIGHT, SCALE, COPX, COPY, PeakForceX, PeakForceY, COPXHistory, COPYHistory, PeakForceXHistory, PeakForceYHistory, 1, DynamicframeCount);
         }
         else if (STATUS == (int)MODE.START_RIGHT)
         {
+            Debug.Log(resultImage[PeakForceX * SCALE + PeakForceY]);
             addDynamicText(ref resultImage, WIDTH, HEIGHT, SCALE, COPX, COPY, PeakForceX, PeakForceY, COPXHistory, COPYHistory, PeakForceXHistory, PeakForceYHistory, leftIdx + 1, DynamicframeCount);
         }
         imageResult.sprite.texture.SetPixels32(resultImage);
