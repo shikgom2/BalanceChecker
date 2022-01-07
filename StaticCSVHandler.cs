@@ -61,7 +61,7 @@ public class StaticCSVHandler : MonoBehaviour
         //make load csv
         // C:/Users/admin/Desktop/flaskProject/data.csv
         // C:/Users/Carly/PycharmProjects/flaskProject/data.csv
-        using (var writer = new CsvFileWriter("C:/Users/admin/Desktop/flaskProject/data.csv"))
+        using (var writer = new CsvFileWriter("./flaskProject/data.csv"))
         {
             List<string> columns = new List<string>();
             columns.Clear();
