@@ -418,7 +418,6 @@ public class StaticCSVHandler : MonoBehaviour
                 footTop = rightMaxY + 1;
             }
         }
-        Debug.Log("FOOT_TYPE : " + FOOT_TYPE + " TOP : " + footTop + " BOTTOM : " + footBottom);
         foreach (int idx in visitQueue)
         {
             //GET ARCH
@@ -445,7 +444,6 @@ public class StaticCSVHandler : MonoBehaviour
             originalImage[idx].g = 0;
             originalImage[idx].b = 0;
         }
-        Debug.Log("ArchB : " + archB + " All : " + (archA + archB + archC));
         archIndex = Math.Round(archB / (double)(archA + archB + archC), 2);
         if(FOOT_TYPE == "LEFT")
         {
