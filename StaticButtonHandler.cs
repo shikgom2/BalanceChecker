@@ -275,8 +275,8 @@ public class StaticButtonHandler : MonoBehaviour {
                 float t = 6 - currentTime;
                 if(t > 1f)
                 {
-                    countdownText.text = (6 - currentTime).ToString("N1");
-                    countdownText2.text = (6 - currentTime).ToString("N1");
+                    countdownText.text = Math.Truncate(6 - currentTime).ToString();
+                    countdownText2.text = Math.Truncate(6 - currentTime).ToString();
                 }
             }
             yield return null;
