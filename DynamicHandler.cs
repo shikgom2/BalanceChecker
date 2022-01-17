@@ -234,8 +234,8 @@ public class DynamicHandler : MonoBehaviour
                 float t = 6 - currentTime;
                 if (t > 1f)
                 {
-                    countdownText.text = (6 - currentTime).ToString("N1");
-                    countdownText2.text = (6 - currentTime).ToString("N1");
+                    countdownText.text = Math.Truncate(6 - currentTime).ToString();
+                    countdownText2.text = Math.Truncate(6 - currentTime).ToString();
                 }
             }
             yield return null;
@@ -694,12 +694,10 @@ public class DynamicHandler : MonoBehaviour
         }
         if (STATUS == (int)MODE.START_LEFT)
         {
-            Debug.Log(resultImage[PeakForceX * SCALE + PeakForceY]);
             addDynamicText(ref resultImage, WIDTH, HEIGHT, SCALE, COPX, COPY, PeakForceX, PeakForceY, COPXHistory, COPYHistory, PeakForceXHistory, PeakForceYHistory, 1, DynamicframeCount);
         }
         else if (STATUS == (int)MODE.START_RIGHT)
         {
-            Debug.Log(resultImage[PeakForceX * SCALE + PeakForceY]);
             addDynamicText(ref resultImage, WIDTH, HEIGHT, SCALE, COPX, COPY, PeakForceX, PeakForceY, COPXHistory, COPYHistory, PeakForceXHistory, PeakForceYHistory, leftIdx + 1, DynamicframeCount);
         }
         imageResult.sprite.texture.SetPixels32(resultImage);
