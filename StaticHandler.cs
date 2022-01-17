@@ -136,8 +136,8 @@ public class StaticHandler : MonoBehaviour
     // Start is called before the first frame update
     void Start()
     {
-        Display.displays[0].Activate(1920, 1080, 60);
-        Display.displays[1].Activate(1920, 1080, 60);
+        //Display.displays[0].Activate(1920, 1080, 60);
+        //Display.displays[1].Activate(1920, 1080, 60);
 
         //getComponents
 
@@ -191,7 +191,7 @@ public class StaticHandler : MonoBehaviour
             startTime = Time.time;
         }
         byte[] rawDataBuffer = new byte[WIDTH * HEIGHT];
-        SetPowA(40);
+        SetPowA(80);
         CollectFrame(rawDataBuffer);    //SAVE BUFFER
 
         var leftAvg = new Tuple<double, double, double,int>(0,0, 0, 0);
