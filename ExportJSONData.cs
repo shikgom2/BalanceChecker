@@ -263,7 +263,10 @@ public class ExportJSONData : MonoBehaviour
                 resultJSon += "],";
 
                 string dynamicJson = "[";
-                for (int i = 0; i < DynamicHandler.rightIdx; i++)
+
+                int leftCount = DynamicHandler.leftIdx > 10 ? 10 : DynamicHandler.leftIdx;
+
+                for (int i = 0; i < leftCount; i++)
                 {
 
                     if (i < DynamicHandler.leftIdx)
@@ -304,6 +307,52 @@ public class ExportJSONData : MonoBehaviour
                         dynamicJson += ",";
                     }
                 }
+
+                int rightStart = DynamicHandler.leftIdx;
+                int rightEnd = DynamicHandler.rightIdx - DynamicHandler.leftIdx > 10 ? DynamicHandler.leftIdx + 10 : DynamicHandler.rightIdx;
+
+                for (int i = rightStart; i < rightEnd; i++)
+                {
+
+                    if (i < DynamicHandler.leftIdx)
+                    {
+                        dynamicJsonData.isLeftRight = "LEFT";
+                        dynamicJsonData.frameNo = i;
+                    }
+                    else
+                    {
+                        dynamicJsonData.isLeftRight = "RIGHT";
+                        dynamicJsonData.frameNo = i - DynamicHandler.leftIdx;
+                    }
+                    dynamicJsonData.COPX = DynamicHandler.COPXHistory[i];
+                    dynamicJsonData.COPY = DynamicHandler.COPYHistory[i];
+                    dynamicJsonData.peakForceX = DynamicHandler.PeakForceXHistory[i];
+                    dynamicJsonData.peakForceY = DynamicHandler.PeakForceYHistory[i];
+                    imageObj = GameObject.Find("Frame_" + i).GetComponent<RawImage>();
+                    rawImageTexture = (Texture2D)imageObj.texture;
+
+                    imageData = rawImageTexture.EncodeToPNG();
+                    png = Convert.ToBase64String(imageData);
+                    dynamicJsonData.frameImage = png;
+
+                    byte[] tmpArray = new byte[52 * 44];
+                    int sum = 0;
+                    for (int k = 0; k < tmpArray.Length; k++)
+                    {
+                        tmpArray[k] = ((byte)(255 - DynamicHandler.DynamicFrameRecordArray[i, k]));
+                        sum += tmpArray[k];
+                    }
+                    //sum = sum / (StaticHandler.WIDTH * StaticHandler.HEIGHT);
+                    dynamicJsonData.frameValueSum = sum;
+
+                    dynamicJson += JsonUtility.ToJson(dynamicJsonData);
+
+                    if (i != rightEnd - 1)
+                    {
+                        dynamicJson += ",";
+                    }
+                }
+
                 dynamicJson += "]";
 
 
@@ -341,10 +390,11 @@ public class ExportJSONData : MonoBehaviour
                 resultJSon += dynamicResultjson;
                 resultJSon += "]}";
 
-                //"C:/AutoSet10/public_html/balanceCheckerImage/" + StaticVaribleHandler.currentKinectCode.Substring(0, 7) + ".json";
+                //"C:/AutoSet10/public_html/balanceCheckerImage/" + StaticVaribleHandler.currentKinectCode.Substring(0, 7) + "
+                //";
                 // C:/Users/admin/Desktop/flaskProject/data.csv                " + StaticVaribleHandler.currentKinectCode.Substring(0, 7) + ".json";
 
-                string fullpth = "./result.csv";
+                string fullpth = "./result.json";
                 if (!File.Exists(fullpth))
                 {
                     var file = File.CreateText(fullpth);
