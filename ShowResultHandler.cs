@@ -614,14 +614,14 @@ public class ShowResultHandler : MonoBehaviour
 
         while (true)
         {
-            Debug.Log("before right y : " + rightEndY + " section1 : " + rightSection1 + " section2 : " + rightSection2);
-            int result = getRightShape(rightSection1, rightSection2);
+            Debug.Log("before right y : " + rightEndY + " section1 : " + rightFrameSection1 + " section2 : " + rightFrameSection2);
+            int result = getRightShape(rightFrameSection1, rightFrameSection2);
             if(result != rightEndY)
             {
                 rightEndY = result;
                 rightFrameSection1 = (rightEndY - rightStartY) / 3 + rightStartY;
                 rightFrameSection2 = (rightEndY - rightStartY) / 3 * 2 + rightStartY;
-                Debug.Log("after right y : " + result + " section1 : " + rightSection1 + " section2 : " + rightSection2);
+                Debug.Log("after right y : " + rightEndY + " section1 : " + rightFrameSection1 + " section2 : " + rightFrameSection2);
             }
             else
             {
@@ -766,8 +766,6 @@ public class ShowResultHandler : MonoBehaviour
                 Debug.Log("Frame" + i + "???");
             }
         }
-
-
 
         float rightFrameContactPercent = Convert.ToSingle(Math.Round(rightFrameContact / (rightFrameContact + rightFrameMidStance + rightFramePropulsive), 4) * 100);
         float rightFrameMidStancePercent = Convert.ToSingle(Math.Round(rightFrameMidStance / (rightFrameContact + rightFrameMidStance + rightFramePropulsive), 4) * 100);
