@@ -84,8 +84,19 @@ public class ExportJSONData : MonoBehaviour
         public double rightMidStancePercent;
         public double rightPropulsivePercent;
 
+        public string leftPeakForceXHistory;
+        public string leftPeakForceYHistory;
+        public string rightPeakForceXHistory;
+        public string rightPeakForceYHistory;
+
         public string leftImage;
         public string rightImage;
+    }
+
+    public enum Rotate
+    {
+        LEFT,
+        RIGHT
     }
     staticObject staticJsonData = new staticObject();
     dynamicRecultObject dynamicResultData = new dynamicRecultObject();
@@ -102,6 +113,12 @@ public class ExportJSONData : MonoBehaviour
     {
         if(StaticVaribleHandler.isEndStatic && StaticVaribleHandler.isEndDynamic && !exportDataFlag)
         {
+            var dirPath = Application.dataPath + "/../ResultImage/";
+            if(!Directory.Exists(dirPath))
+            {
+                Directory.CreateDirectory(dirPath);
+            }
+
             StaticCSVHandler.leftArchIndexList.Sort();
             StaticCSVHandler.rightArchIndexList.Sort();
 
@@ -248,8 +265,9 @@ public class ExportJSONData : MonoBehaviour
 
             staticResultObj = GameObject.Find("staticResultInterpolationImage").GetComponent<Image>();
             Texture2D rawImageTexture = (Texture2D)staticResultObj.mainTexture;
-
+            rawImageTexture = FlipTexture(rawImageTexture, true);
             byte[] imageData = rawImageTexture.EncodeToPNG();
+            File.WriteAllBytes(dirPath + " staticResult" + ".png" , imageData);
             string png = Convert.ToBase64String(imageData);
 
             staticJsonData.staticImage = png;
@@ -266,27 +284,35 @@ public class ExportJSONData : MonoBehaviour
 
                 int leftCount = DynamicHandler.leftIdx > 10 ? 10 : DynamicHandler.leftIdx;
 
+                string leftPeakForceXHistory = "";
+                string leftPeakForceYHistory = "";
+                string rightPeakForceXHistory = "";
+                string rightPeakForceYHistory = "";
+
                 for (int i = 0; i < leftCount; i++)
                 {
-
-                    if (i < DynamicHandler.leftIdx)
-                    {
-                        dynamicJsonData.isLeftRight = "LEFT";
-                        dynamicJsonData.frameNo = i;
-                    }
-                    else
-                    {
-                        dynamicJsonData.isLeftRight = "RIGHT";
-                        dynamicJsonData.frameNo = i - DynamicHandler.leftIdx;
-                    }
+                    dynamicJsonData.isLeftRight = "LEFT";
+                    dynamicJsonData.frameNo = i;
+                    
                     dynamicJsonData.COPX = DynamicHandler.COPXHistory[i];
                     dynamicJsonData.COPY = DynamicHandler.COPYHistory[i];
                     dynamicJsonData.peakForceX = DynamicHandler.PeakForceXHistory[i];
                     dynamicJsonData.peakForceY = DynamicHandler.PeakForceYHistory[i];
+
+                    leftPeakForceXHistory += DynamicHandler.PeakForceXHistory[i].ToString();
+                    leftPeakForceXHistory += ",";
+                    leftPeakForceYHistory += DynamicHandler.PeakForceYHistory[i].ToString();
+                    leftPeakForceYHistory += ",";
+
+
                     imageObj = GameObject.Find("Frame_" + i).GetComponent<RawImage>();
                     rawImageTexture = (Texture2D)imageObj.texture;
-
+                    rawImageTexture = FlipTexture(rawImageTexture, true);
+                    rawImageTexture = RotateTexture(rawImageTexture, Rotate.LEFT);
                     imageData = rawImageTexture.EncodeToPNG();
+                   
+                    File.WriteAllBytes(dirPath + "Dynamic_LEFT_" + i + ".png", imageData);
+
                     png = Convert.ToBase64String(imageData);
                     dynamicJsonData.frameImage = png;
 
@@ -307,31 +333,36 @@ public class ExportJSONData : MonoBehaviour
                         dynamicJson += ",";
                     }
                 }
+                leftPeakForceXHistory = leftPeakForceXHistory.Substring(0, leftPeakForceXHistory.Length - 1);
+                leftPeakForceYHistory = leftPeakForceYHistory.Substring(0, leftPeakForceYHistory.Length - 1);
 
                 int rightStart = DynamicHandler.leftIdx;
                 int rightEnd = DynamicHandler.rightIdx - DynamicHandler.leftIdx > 10 ? DynamicHandler.leftIdx + 10 : DynamicHandler.rightIdx;
 
                 for (int i = rightStart; i < rightEnd; i++)
                 {
-
-                    if (i < DynamicHandler.leftIdx)
-                    {
-                        dynamicJsonData.isLeftRight = "LEFT";
-                        dynamicJsonData.frameNo = i;
-                    }
-                    else
-                    {
-                        dynamicJsonData.isLeftRight = "RIGHT";
-                        dynamicJsonData.frameNo = i - DynamicHandler.leftIdx;
-                    }
+                    dynamicJsonData.isLeftRight = "RIGHT";
+                    dynamicJsonData.frameNo = i - DynamicHandler.leftIdx;
+                    
                     dynamicJsonData.COPX = DynamicHandler.COPXHistory[i];
                     dynamicJsonData.COPY = DynamicHandler.COPYHistory[i];
                     dynamicJsonData.peakForceX = DynamicHandler.PeakForceXHistory[i];
                     dynamicJsonData.peakForceY = DynamicHandler.PeakForceYHistory[i];
-                    imageObj = GameObject.Find("Frame_" + i).GetComponent<RawImage>();
-                    rawImageTexture = (Texture2D)imageObj.texture;
 
+                    rightPeakForceXHistory += DynamicHandler.PeakForceXHistory[i].ToString();
+                    rightPeakForceXHistory += ",";
+                    rightPeakForceYHistory += DynamicHandler.PeakForceYHistory[i].ToString();
+                    rightPeakForceYHistory += ",";
+
+
+                    imageObj = GameObject.Find("Frame_" + i).GetComponent<RawImage>();
+
+                    rawImageTexture = (Texture2D)imageObj.texture;
+                    rawImageTexture = RotateTexture(rawImageTexture, Rotate.LEFT);
+                    rawImageTexture = FlipTexture(rawImageTexture, true);
                     imageData = rawImageTexture.EncodeToPNG();
+                    File.WriteAllBytes(dirPath + "Dynamic_RIGHT_" + (i - DynamicHandler.leftIdx) + ".png", imageData);
+
                     png = Convert.ToBase64String(imageData);
                     dynamicJsonData.frameImage = png;
 
@@ -352,9 +383,10 @@ public class ExportJSONData : MonoBehaviour
                         dynamicJson += ",";
                     }
                 }
+                rightPeakForceXHistory = rightPeakForceXHistory.Substring(0, rightPeakForceXHistory.Length - 1);
+                rightPeakForceYHistory = rightPeakForceYHistory.Substring(0, rightPeakForceYHistory.Length - 1);
 
                 dynamicJson += "]";
-
 
                 resultJSon += "\"Dynamic\" : [";
                 resultJSon += dynamicJson;
@@ -368,19 +400,31 @@ public class ExportJSONData : MonoBehaviour
                 dynamicResultData.rightMidStancePercent = Math.Round(ShowResultHandler.rightValueArray[1], 2);
                 dynamicResultData.rightPropulsivePercent = Math.Round(ShowResultHandler.rightValueArray[2], 2);
 
+                dynamicResultData.leftPeakForceXHistory = leftPeakForceXHistory;
+                dynamicResultData.leftPeakForceYHistory = leftPeakForceXHistory;
+                dynamicResultData.rightPeakForceXHistory = rightPeakForceXHistory;
+                dynamicResultData.rightPeakForceYHistory = rightPeakForceYHistory;
 
                 staticResultObj = GameObject.Find("leftCropImage").GetComponent<Image>();
                 rawImageTexture = (Texture2D)staticResultObj.mainTexture;
+                rawImageTexture = FlipTexture(rawImageTexture, true);
+                rawImageTexture = RotateTexture(rawImageTexture, Rotate.LEFT);
 
                 imageData = rawImageTexture.EncodeToPNG();
+                File.WriteAllBytes(dirPath + "Dynamic_LEFT.png", imageData);
+
                 png = Convert.ToBase64String(imageData);
                 dynamicResultData.leftImage = png;
 
 
                 staticResultObj = GameObject.Find("rightCropImage").GetComponent<Image>();
                 rawImageTexture = (Texture2D)staticResultObj.mainTexture;
+                rawImageTexture = RotateTexture(rawImageTexture, Rotate.LEFT);
+                rawImageTexture = FlipTexture(rawImageTexture, true);
 
                 imageData = rawImageTexture.EncodeToPNG();
+                File.WriteAllBytes(dirPath + "Dynamic_RIGHT.png", imageData);
+
                 png = Convert.ToBase64String(imageData);
                 dynamicResultData.rightImage = png;
 
@@ -394,7 +438,7 @@ public class ExportJSONData : MonoBehaviour
                 //";
                 // C:/Users/admin/Desktop/flaskProject/data.csv                " + StaticVaribleHandler.currentKinectCode.Substring(0, 7) + ".json";
 
-                string fullpth = "./result.json";
+                string fullpth = dirPath + "result.json";
                 if (!File.Exists(fullpth))
                 {
                     var file = File.CreateText(fullpth);
@@ -404,6 +448,49 @@ public class ExportJSONData : MonoBehaviour
                 StreamWriter sw = new StreamWriter(fullpth);
                 sw.WriteLine(resultJSon);
                 sw.Flush();
+
+                string fullpth2 = dirPath + "result.csv";
+                if (!File.Exists(fullpth2))
+                {
+                    var file = File.CreateText(fullpth2);
+                    file.Close();
+                }
+
+                sw = new StreamWriter(fullpth2);
+                
+                sw.WriteLine("image_path,left,right,top,bottom,topleft,topright,bottomleft,bottomright,leftAreaCount,rightAreaCount,leftPeakForceX,leftPeakForceY,rightPeakForceX, rightPeakForceY, leftArchIndex,rightArchIndex,leftCOPX,leftCOPY,rightCOPX,rightCOPY,COGX,COGY,leftContact,leftMidStance,leftPropulsive,rightContact,rightMidStance,rightPropulsive");
+                sw.WriteLine("{0},{1},{2},{3},{4},{5},{6},{7},{8},{9},{10},{11},{12},{13},{14},{15},{16},{17},{18},{19},{20},{21},{22},{23},{24},{25},{26},{27},{28}",
+                    " ",
+                    staticJsonData.leftPercent,
+                    staticJsonData.rightPercent,
+                    staticJsonData.topPercent,
+                    staticJsonData.bottomPercent,
+                    staticJsonData.topleftPercent,
+                    staticJsonData.toprightPercent,
+                    staticJsonData.bottomleftPercent,
+                    staticJsonData.bottomrightPercent,
+                    staticJsonData.leftAreaCount,
+                    staticJsonData.rightAreaCount,
+                    staticJsonData.leftPeakforceX,
+                    staticJsonData.leftPeakforceY,
+                    staticJsonData.rightPeakforceX,
+                    staticJsonData.rightPeakforceY,
+                    staticJsonData.leftArchindex,
+                    staticJsonData.rightArchindex,
+                    staticJsonData.leftCOPX,
+                    staticJsonData.leftCOPY,
+                    staticJsonData.rightCOPX,
+                    staticJsonData.rightCOPY,
+                    staticJsonData.COGX,
+                    staticJsonData.COGY,
+                    dynamicResultData.leftContactPercent,
+                    dynamicResultData.leftMidStancePercent,
+                    dynamicResultData.leftPropulsivePercent,
+                    dynamicResultData.rightContactPercent,
+                    dynamicResultData.rightMidStancePercent,
+                    dynamicResultData.rightPropulsivePercent
+                    );
+
                 sw.Close();
             }
             exportDataFlag = true;
@@ -522,5 +609,60 @@ public class ExportJSONData : MonoBehaviour
         var chars = Enumerable.Range(0, 40).Select(x => input[rand.Next(0, input.Length)]);
         return new string(chars.ToArray());
     }
+
+    Texture2D FlipTexture(Texture2D original, bool upSideDown = true)
+    {
+        int width = original.width;
+        int height = original.height;
+        Texture2D snap = new Texture2D(width, height);
+        Color[] pixels = original.GetPixels();
+        Color[] pixelsFlipped = new Color[pixels.Length];
+
+        for (int i = 0; i < height; i++)
+        {
+            Array.Copy(pixels, i * width, pixelsFlipped, (height - i - 1) * width, width);
+        }
+
+        snap.SetPixels(pixelsFlipped);
+
+        return snap;
+    }
+
+    Texture2D RotateTexture(Texture2D original, Rotate rotation)
+    {
+        Color32[] colorSource = original.GetPixels32();
+        Color32[] colorResult = new Color32[colorSource.Length];
+
+        int count = 0;
+        int newWidth = original.height;
+        int newHeight = original.width;
+        int index = 0;
+
+        for (int i = 0; i < original.width; i++)
+        {
+            for (int j = 0; j < original.height; j++)
+            {
+                if(rotation == Rotate.LEFT)
+                {
+                    index = (original.width * (original.height - j)) - original.width + i;
+                }
+                else if(rotation == Rotate.RIGHT)
+                {
+                    index = (original.width * (j + 1)) - (i + 1);
+                }
+                colorResult[count] = colorSource[index];
+                count++;
+            }
+        }
+        Texture2D snap = new Texture2D(newWidth, newHeight);
+
+        original.Resize(newWidth, newHeight);
+        snap.SetPixels32(colorResult);
+        snap.Apply();
+
+        colorResult = null;
+        return snap;
+    }
+
 }
 
