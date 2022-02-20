@@ -46,6 +46,20 @@ public class ShowResultHandler : MonoBehaviour
     public int rightFrameSection1;
     public int rightFrameSection2;
 
+
+
+    public int leftCropWidthMin;
+    public int leftCropWidthMax;
+
+    public int leftCropHeightMin;
+    public int leftCropHeightMax;
+
+    public int rightCropWidthMin;
+    public int rightCropWidthMax;
+
+    public int rightCropHeightMin;
+    public int rightCropHeightMax;
+
     public Color[] wedgeColors;
     public Image wedgePrefab;
     public static float[] leftValueArray;
@@ -96,7 +110,7 @@ public class ShowResultHandler : MonoBehaviour
                         a = 255
                     };
                 }
-                frameClones[i].SetImage(cloneImage, cloneInterpolation, StaticHandler.WIDTH, StaticHandler.HEIGHT, 1, 0, i);
+                frameClones[i].SetImage(cloneImage, cloneInterpolation, StaticHandler.WIDTH, StaticHandler.HEIGHT, 1, 0, i, leftCropWidthMin, leftCropWidthMax, leftCropHeightMin, leftCropHeightMax);
             }
 
             for (int i = DynamicHandler.leftIdx; i < DynamicHandler.rightIdx; i++)
@@ -117,7 +131,7 @@ public class ShowResultHandler : MonoBehaviour
                         a = 255
                     };
                 }
-                frameClones[i].SetImage(cloneImage, cloneInterpolation, StaticHandler.WIDTH, StaticHandler.HEIGHT, 1, DynamicHandler.leftIdx, i);
+                frameClones[i].SetImage(cloneImage, cloneInterpolation, StaticHandler.WIDTH, StaticHandler.HEIGHT, 1, DynamicHandler.leftIdx, i, rightCropWidthMin, rightCropWidthMax, rightCropHeightMin, rightCropHeightMax);
 
             }
             getFrameArch(leftFrameSection1, leftFrameSection2, rightFrameSection1, rightFrameSection2);
@@ -280,6 +294,12 @@ public class ShowResultHandler : MonoBehaviour
         int heightmax = heightmin > 0 ? heightavg + 220 : 440;
         */
         Debug.Log("#1 width avg : " + widthavg + " height avg : " + heightavg);
+
+
+        leftCropWidthMin = widthmin;
+        leftCropWidthMax = widthmax;
+        leftCropHeightMin = heightmin;
+        leftCropHeightMax = heightmax;
 
 
         //crop point
@@ -447,6 +467,10 @@ public class ShowResultHandler : MonoBehaviour
         heightmin = heightavg - 220 > 0 ? heightavg - 220 : 0;
         heightmax = heightmin > 0 ? heightavg + 220 : 440;
         */
+        rightCropWidthMin = widthmin;
+        rightCropWidthMax = widthmax;
+        rightCropHeightMin = heightmin;
+        rightCropHeightMax = heightmax;
 
         Debug.Log("#2 width avg : " + widthavg + " height avg : " + heightavg);
 
@@ -616,7 +640,7 @@ public class ShowResultHandler : MonoBehaviour
         {
             Debug.Log("before right y : " + rightEndY + " section1 : " + rightFrameSection1 + " section2 : " + rightFrameSection2);
             int result = getRightShape(rightFrameSection1, rightFrameSection2);
-            if(result != rightEndY)
+            if (result != rightEndY)
             {
                 rightEndY = result;
                 rightFrameSection1 = (rightEndY - rightStartY) / 3 + rightStartY;
@@ -688,7 +712,7 @@ public class ShowResultHandler : MonoBehaviour
                 rightEndIdx = rightEndY;
             }
 
-            if(rightMax < rightEndIdx)
+            if (rightMax < rightEndIdx)
             {
                 rightMax = rightEndIdx;
             }
