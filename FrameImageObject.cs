@@ -21,10 +21,11 @@ public class FrameImageObject : MonoBehaviour
 
     private Texture2D texture;
     private Texture2D textureInterpolation;
+    private Texture2D textureCrop;
 
-    public void SetImage(Color32[] imageData, Color32[] imageInterpolation, int imageWidth, int imageHeight, int type, int startidx , int endidx)
+    public void SetImage(Color32[] imageData, Color32[] imageInterpolation, int imageWidth, int imageHeight, int type, int startidx, int endidx, int CropWidthMin, int CropWidthMax, int CropHeightMin, int CropHeightMax)
     {
-        if(texture != null)
+        if (texture != null)
         {
             Destroy(texture);
             Destroy(textureInterpolation);
@@ -41,7 +42,7 @@ public class FrameImageObject : MonoBehaviour
 
         getColormap(ref imageInterpolation, imageWidth, imageHeight, StaticHandler.SCALE);    //set colormap jet
 
-        for(int i = 0; i< imageInterpolation.Length; i++)
+        for (int i = 0; i < imageInterpolation.Length; i++)
         {
             if (imageInterpolation[i].r == 0 && imageInterpolation[i].g == 0 && imageInterpolation[i].b > 110)
             {
@@ -63,8 +64,25 @@ public class FrameImageObject : MonoBehaviour
         else
         {
             //do nothing
-        }   
-        image.texture = textureInterpolation;
+        }
+        textureCrop = new Texture2D(440, 260, TextureFormat.RGB24, false);
+        Color32[] frameCropImage = new Color32[260 * 440];
+        int cropIdx = 0;
+        for (int k = 0; k < imageInterpolation.Length; k++)
+        {
+            if (k % 520 >= CropHeightMin && k % 520 < CropHeightMax && k / 520 >= CropWidthMin && k / 520 < CropWidthMax)
+            {
+                frameCropImage[cropIdx].r = imageInterpolation[k].r;
+                frameCropImage[cropIdx].g = imageInterpolation[k].g;
+                frameCropImage[cropIdx].b = imageInterpolation[k].b;
+                cropIdx++;
+            }
+        }
+        textureCrop.SetPixels32(frameCropImage);
+        textureCrop.Apply();
+
+
+        image.texture = textureCrop;
     }
 
     private void OnDestroy()
@@ -75,12 +93,12 @@ public class FrameImageObject : MonoBehaviour
     // Start is called before the first frame update
     void Start()
     {
-        
+
     }
 
     // Update is called once per frame
     void Update()
     {
-        
+
     }
 }
