@@ -14,6 +14,8 @@ public class FrameImageObject : MonoBehaviour
     private static extern void interpolationResult(ref Color32[] rawImage, ref Color32[] interpolationImage, int width, int height, int scale);
     [DllImport("OpenCVDLL")]
     private static extern void getColormap(ref Color32[] rawImage, int width, int height, int scale);   //only use this script
+    [DllImport("OpenCVDLL")]
+    private static extern void makeColormap(ref Color32[] rawImage, int width, int height, int flag);   //only use this script
 
 
 
@@ -23,7 +25,7 @@ public class FrameImageObject : MonoBehaviour
     private Texture2D textureInterpolation;
     private Texture2D textureCrop;
 
-    public void SetImage(Color32[] imageData, Color32[] imageInterpolation, int imageWidth, int imageHeight, int type, int startidx, int endidx, int CropWidthMin, int CropWidthMax, int CropHeightMin, int CropHeightMax)
+    public void SetImage(Color32[] imageData, Color32[] imageInterpolation, int imageWidth, int imageHeight, int type, int startidx, int endidx, int CropWidthMin, int CropWidthMax, int CropHeightMin, int CropHeightMax, int frameCount)
     {
         if (texture != null)
         {
@@ -56,8 +58,6 @@ public class FrameImageObject : MonoBehaviour
 
         if (type == 1)   //dynamic 
         {
-            //set interpolation
-            //addResultLine(ref imageInterpolation, StaticHandler.WIDTH, StaticHandler.HEIGHT, StaticHandler.SCALE, DynamicHandler.COPXHistory, DynamicHandler.COPYHistory, DynamicHandler.PeakForceXHistory, DynamicHandler.PeakForceYHistory, startidx, endidx);
             textureInterpolation.SetPixels32(imageInterpolation);
             textureInterpolation.Apply();
         }
@@ -81,6 +81,72 @@ public class FrameImageObject : MonoBehaviour
         textureCrop.SetPixels32(frameCropImage);
         textureCrop.Apply();
 
+        /*
+        // make grayscale
+        float r = 0.299f;
+        float g = 0.587f;
+        float b = 0.114f;
+        for (int k = 0; k < frameCropImage.Length; k++)
+        {
+            float tmpr = frameCropImage[k].r;
+            float tmpb = frameCropImage[k].b;
+            float tmpg = frameCropImage[k].g;
+
+            float color = (r * tmpr + g * tmpg + b * tmpb) * 255f;
+            frameCropImage[k].r = (byte)color;
+            frameCropImage[k].g = (byte)color;
+            frameCropImage[k].b = (byte)color;
+        }
+        */
+        makeColormap(ref frameCropImage, 260, 420, 0);
+        textureCrop.SetPixels32(frameCropImage);
+        textureCrop.Apply();
+
+        int PeakForceVal = 999;
+        int PeakForceIdxMax = 0;
+        int PeakForceIdxMin = 0;
+
+        for (int i = 0; i < frameCropImage.Length; i++)
+        {
+            int value = frameCropImage[i].r;
+            if (value < PeakForceVal)
+            {
+                PeakForceVal = value;
+                PeakForceIdxMin = i;
+                PeakForceIdxMax = i;
+            }
+            else if (value == PeakForceVal)
+            {
+                PeakForceIdxMax = i;
+            }
+        }
+        int PeakforceMaxX = PeakForceIdxMax % 260;
+        int PeakforceMinX = PeakForceIdxMin % 260;
+
+        int PeakforceMaxY = PeakForceIdxMax / 440;
+        int PeakforceMinY = PeakForceIdxMin / 440;
+
+        int PeakForceX = (PeakforceMaxX + PeakforceMinX) / 2;
+        int PeakForceY = (PeakforceMaxY + PeakforceMinY) / 2;
+
+        DynamicHandler.PeakForceXHistory[frameCount] = PeakForceX;
+        DynamicHandler.PeakForceYHistory[frameCount] = PeakForceY;
+
+        makeColormap(ref frameCropImage, 260, 420, 1);
+        textureCrop.SetPixels32(frameCropImage);
+        textureCrop.Apply();
+
+        for (int i = 0; i < frameCropImage.Length; i++)
+        {
+            if(frameCropImage[i].r == 0 && frameCropImage[i].g == 0 && frameCropImage[i].b == 128)
+            {
+                frameCropImage[i].r = 255;
+                frameCropImage[i].g = 255;
+                frameCropImage[i].b = 255;
+            }
+        }
+        textureCrop.SetPixels32(frameCropImage);
+        textureCrop.Apply();
 
         image.texture = textureCrop;
     }
